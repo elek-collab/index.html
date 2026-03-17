@@ -4,372 +4,466 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RESA · CRM Expositores</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-  :root {
-    --red: #C8102E;
-    --red-dark: #9e0c23;
-    --red-light: #f9e8eb;
-    --black: #111111;
-    --gray-900: #1a1a1a;
-    --gray-700: #3d3d3d;
-    --gray-400: #888;
-    --gray-200: #e8e8e8;
-    --gray-100: #f4f4f4;
-    --white: #ffffff;
-    --opened: #0a7c59;
-    --opened-bg: #e6f5f0;
-    --click: #1a56a0;
-    --click-bg: #e8f0fb;
-    --sent: #5a5a5a;
-    --sent-bg: #efefef;
-    --error: #b84d00;
-    --error-bg: #fdf0e6;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--black); min-height: 100vh; }
+:root {
+  --red: #C8102E; --red-dark: #9e0c23; --red-light: #fdf0f2; --red-mid: #f5c6cc;
+  --black: #0d0d0d; --gray-900: #161616; --gray-800: #1e1e1e; --gray-700: #2d2d2d;
+  --gray-500: #555; --gray-400: #888; --gray-300: #bbb; --gray-200: #e2e2e2; --gray-100: #f6f6f6;
+  --white: #fff;
+  --green: #059669; --green-bg: #ecfdf5;
+  --blue: #1d4ed8; --blue-bg: #eff6ff;
+  --amber: #b45309; --amber-bg: #fffbeb;
+  --sidebar: 240px;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Outfit',sans-serif; background:var(--gray-100); color:var(--black); min-height:100vh; font-size:14px; }
 
-  /* ── AUTH SCREEN ── */
-  #authScreen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--black);
-  }
-  .auth-card {
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 20px;
-    padding: 48px 52px;
-    width: 420px;
-    text-align: center;
-  }
-  .auth-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--red); letter-spacing: 4px; line-height: 1; }
-  .auth-sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #555; margin-top: 6px; margin-bottom: 40px; }
-  .auth-title { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 8px; }
-  .auth-desc { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 32px; }
-  .auth-divider { border: none; border-top: 1px solid #2a2a2a; margin: 24px 0; }
-  .auth-steps { text-align: left; margin-bottom: 32px; }
-  .auth-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-  .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-  .step-text { font-size: 12px; color: #888; line-height: 1.5; }
-  .step-text strong { color: #ccc; }
-  .config-section { background: #111; border: 1px solid #2a2a2a; border-radius: 12px; padding: 18px; margin-bottom: 24px; text-align: left; }
-  .config-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 6px; }
-  .config-input {
-    width: 100%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: #ccc;
-    outline: none;
-    margin-bottom: 12px;
-  }
-  .config-input:focus { border-color: var(--red); }
-  .config-input:last-child { margin-bottom: 0; }
-  .btn-google {
-    width: 100%;
-    background: var(--red);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: background 0.15s;
-  }
-  .btn-google:hover { background: var(--red-dark); }
-  .btn-google:disabled { background: #333; color: #555; cursor: not-allowed; }
-  .auth-note { font-size: 11px; color: #444; margin-top: 16px; line-height: 1.5; }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:99px; }
 
-  /* ── SETUP SCREEN ── */
-  #setupScreen { display: none; min-height: 100vh; align-items: center; justify-content: center; background: var(--black); }
-  .setup-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 40px 48px; width: 480px; }
-  .setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 2px; margin-bottom: 4px; }
-  .setup-sub { font-size: 12px; color: #666; margin-bottom: 28px; }
-  .setup-field { margin-bottom: 16px; }
-  .setup-field label { display: block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 6px; }
-  .setup-field input, .setup-field select {
-    width: 100%;
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: #ccc;
-    outline: none;
-  }
-  .setup-field input:focus, .setup-field select:focus { border-color: var(--red); }
-  .setup-field .hint { font-size: 11px; color: #444; margin-top: 4px; }
-  .btn-setup {
-    width: 100%;
-    background: var(--red);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 13px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background 0.15s;
-  }
-  .btn-setup:hover { background: var(--red-dark); }
+/* ══════════════════════════════════
+   AUTH SCREEN
+══════════════════════════════════ */
+#authScreen {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, #2a0810 0%, var(--black) 60%);
+}
+.auth-wrap { width:440px; }
+.auth-brand { text-align:center; margin-bottom:32px; }
+.auth-logo { font-family:'Bebas Neue',sans-serif; font-size:64px; color:var(--red); letter-spacing:6px; line-height:1; }
+.auth-tagline { font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--gray-500); margin-top:4px; }
+.auth-card {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:20px; padding:36px; backdrop-filter:blur(12px);
+}
+.auth-card h2 { font-size:18px; font-weight:600; color:var(--white); margin-bottom:6px; }
+.auth-card p { font-size:13px; color:var(--gray-500); line-height:1.6; margin-bottom:28px; }
+.field-group { margin-bottom:14px; }
+.field-group label { display:block; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--gray-500); margin-bottom:6px; }
+.field-group input {
+  width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+  border-radius:10px; padding:11px 14px; font-family:'Outfit',sans-serif; font-size:13px;
+  color:var(--white); outline:none; transition:border-color .2s;
+}
+.field-group input::placeholder { color:var(--gray-700); }
+.field-group input:focus { border-color:var(--red); }
+.btn-connect {
+  width:100%; margin-top:8px; padding:14px; background:var(--red); color:var(--white);
+  border:none; border-radius:10px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+  transition:all .2s; position:relative; overflow:hidden;
+}
+.btn-connect::before { content:''; position:absolute; inset:0; background:rgba(255,255,255,.1); opacity:0; transition:opacity .2s; }
+.btn-connect:hover::before { opacity:1; }
+.btn-connect:disabled { background:var(--gray-700); color:var(--gray-500); cursor:not-allowed; }
+.auth-divider { display:flex; align-items:center; gap:12px; margin:24px 0; }
+.auth-divider span { flex:1; height:1px; background:rgba(255,255,255,.07); }
+.auth-divider p { font-size:11px; color:var(--gray-700); white-space:nowrap; }
+.setup-steps { display:flex; flex-direction:column; gap:10px; }
+.setup-step { display:flex; gap:12px; align-items:flex-start; }
+.step-n { width:20px; height:20px; border-radius:50%; background:rgba(200,16,46,.2); border:1px solid rgba(200,16,46,.4); color:var(--red); font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.setup-step p { font-size:12px; color:var(--gray-500); line-height:1.5; }
+.setup-step strong { color:var(--gray-300); }
 
-  /* ── LOADING ── */
-  #loadingScreen { display: none; min-height: 100vh; align-items: center; justify-content: center; background: var(--black); flex-direction: column; gap: 16px; }
-  .spinner { width: 40px; height: 40px; border: 3px solid #333; border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 13px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+/* ══════════════════════════════════
+   LOADING
+══════════════════════════════════ */
+#loadingScreen {
+  display:none; min-height:100vh; align-items:center; justify-content:center;
+  flex-direction:column; gap:20px;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%, #2a0810 0%, var(--black) 60%);
+}
+.loader { width:44px; height:44px; border:3px solid rgba(200,16,46,.2); border-top-color:var(--red); border-radius:50%; animation:spin .7s linear infinite; }
+.loader-text { font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--gray-500); }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-  /* ── APP ── */
-  #appScreen { display: none; }
-  .layout { display: flex; min-height: 100vh; }
-  .sidebar { width: 220px; background: var(--black); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
-  .logo-area { padding: 28px 20px 24px; border-bottom: 1px solid #2a2a2a; }
-  .logo-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 2px; line-height: 1; }
-  .logo-sub { font-size: 10px; color: var(--gray-400); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
-  .user-chip { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-top: 1px solid #2a2a2a; }
-  .user-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; overflow: hidden; }
-  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { font-size: 12px; color: #aaa; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .logout-btn { font-size: 11px; color: #555; cursor: pointer; background: none; border: none; }
-  .logout-btn:hover { color: var(--red); }
-  .nav { padding: 16px 0; flex: 1; overflow-y: auto; }
-  .nav-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #555; padding: 8px 20px 6px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: #aaa; font-size: 13px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
-  .nav-item:hover { color: var(--white); background: #1f1f1f; }
-  .nav-item.active { color: var(--white); border-left-color: var(--red); background: #1f1f1f; }
-  .nav-badge { margin-left: auto; background: var(--red); color: white; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+/* ══════════════════════════════════
+   APP LAYOUT
+══════════════════════════════════ */
+#appScreen { display:none; }
+.layout { display:flex; min-height:100vh; }
 
-  .main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; }
-  .topbar { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-  .topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1.5px; }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .search-box { display: flex; align-items: center; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 7px 12px; gap: 8px; width: 260px; }
-  .search-box input { border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--black); outline: none; width: 100%; }
-  .search-box input::placeholder { color: var(--gray-400); }
-  .btn-primary { background: var(--red); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
-  .btn-primary:hover { background: var(--red-dark); }
-  .btn-ghost { background: transparent; border: 1px solid var(--gray-200); border-radius: 7px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--gray-700); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
-  .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+/* SIDEBAR */
+.sidebar {
+  width:var(--sidebar); background:var(--black); position:fixed; top:0; left:0; bottom:0;
+  display:flex; flex-direction:column; z-index:100; border-right:1px solid var(--gray-800);
+}
+.sidebar-brand { padding:24px 20px 20px; border-bottom:1px solid var(--gray-800); }
+.brand-logo { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--red); letter-spacing:3px; line-height:1; }
+.brand-sub { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gray-500); margin-top:3px; }
+.sidebar-nav { flex:1; overflow-y:auto; padding:12px 0; }
+.nav-section { padding:8px 16px 4px; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gray-700); font-weight:600; }
+.nav-link {
+  display:flex; align-items:center; gap:10px; padding:9px 16px; color:var(--gray-500);
+  font-size:13px; font-weight:500; cursor:pointer; border-left:2px solid transparent;
+  transition:all .15s; text-decoration:none; border-radius:0 8px 8px 0; margin:1px 8px 1px 0;
+}
+.nav-link:hover { color:var(--white); background:var(--gray-800); }
+.nav-link.active { color:var(--white); border-left-color:var(--red); background:rgba(200,16,46,.08); }
+.nav-link .ico { width:16px; text-align:center; font-size:14px; }
+.nav-badge { margin-left:auto; background:var(--red); color:var(--white); font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; line-height:1.4; }
+.nav-badge.green { background:var(--green); }
+.nav-feria { display:flex; align-items:center; gap:8px; padding:7px 16px; color:var(--gray-600); font-size:12px; cursor:pointer; transition:all .15s; border-radius:0 8px 8px 0; margin:1px 8px 1px 0; }
+.nav-feria:hover { color:var(--white); background:var(--gray-800); }
+.nav-feria .dot { width:6px; height:6px; border-radius:50%; background:var(--red); opacity:.5; flex-shrink:0; }
+.nav-feria span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sidebar-footer { padding:14px 16px; border-top:1px solid var(--gray-800); display:flex; align-items:center; gap:10px; }
+.user-av { width:28px; height:28px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--white); overflow:hidden; flex-shrink:0; }
+.user-av img { width:100%; height:100%; object-fit:cover; }
+.user-name { font-size:12px; color:var(--gray-400); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.logout-btn { font-size:11px; color:var(--gray-700); cursor:pointer; background:none; border:none; padding:4px; transition:color .15s; }
+.logout-btn:hover { color:var(--red); }
 
-  .content { padding: 24px 28px; }
-  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
-  .kpi-card { background: var(--white); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--gray-200); position: relative; overflow: hidden; }
-  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red); }
-  .kpi-card.green::before { background: var(--opened); }
-  .kpi-card.blue::before { background: var(--click); }
-  .kpi-card.orange::before { background: var(--error); }
-  .kpi-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 6px; }
-  .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; line-height: 1; }
-  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+/* MAIN */
+.main { margin-left:var(--sidebar); flex:1; display:flex; flex-direction:column; min-height:100vh; }
 
-  .filters-bar { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .filter-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
-  .filter-select { border: 1px solid var(--gray-200); border-radius: 8px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--black); background: var(--gray-100); cursor: pointer; outline: none; }
-  .filter-select:focus { border-color: var(--red); }
-  .filter-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-700); transition: all 0.15s; }
-  .filter-chip:hover, .filter-chip.active { border-color: var(--red); color: var(--red); background: var(--red-light); }
-  .filter-chip.active-green { border-color: var(--opened); color: var(--opened); background: var(--opened-bg); }
-  .filter-chip.active-blue { border-color: var(--click); color: var(--click); background: var(--click-bg); }
-  .filter-count { margin-left: auto; font-size: 12px; color: var(--gray-400); }
-  .sync-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--gray-700); cursor: pointer; transition: all 0.15s; }
-  .sync-btn:hover { border-color: var(--red); color: var(--red); }
-  .sync-btn.syncing .sync-icon { animation: spin 1s linear infinite; display: inline-block; }
+/* TOPBAR */
+.topbar {
+  background:var(--white); border-bottom:1px solid var(--gray-200);
+  padding:0 24px; height:58px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.topbar-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1.5px; color:var(--black); }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.search-wrap {
+  display:flex; align-items:center; gap:8px; background:var(--gray-100);
+  border:1.5px solid transparent; border-radius:10px; padding:8px 14px; width:300px;
+  transition:all .2s;
+}
+.search-wrap:focus-within { background:var(--white); border-color:var(--red); box-shadow:0 0 0 3px rgba(200,16,46,.08); }
+.search-wrap input { border:none; background:transparent; font-family:'Outfit',sans-serif; font-size:13px; color:var(--black); outline:none; width:100%; }
+.search-wrap input::placeholder { color:var(--gray-400); }
+.search-ico { color:var(--gray-400); font-size:14px; flex-shrink:0; }
+.btn { display:inline-flex; align-items:center; gap:7px; padding:8px 16px; border-radius:9px; font-family:'Outfit',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; border:none; }
+.btn-primary { background:var(--red); color:var(--white); }
+.btn-primary:hover { background:var(--red-dark); transform:translateY(-1px); box-shadow:0 4px 12px rgba(200,16,46,.3); }
+.btn-secondary { background:var(--white); color:var(--gray-700); border:1.5px solid var(--gray-200); }
+.btn-secondary:hover { border-color:var(--red); color:var(--red); }
+.btn-icon { width:34px; height:34px; padding:0; justify-content:center; background:var(--white); color:var(--gray-500); border:1.5px solid var(--gray-200); border-radius:9px; }
+.btn-icon:hover { border-color:var(--red); color:var(--red); background:var(--red-light); }
 
-  .table-wrap { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; }
-  .table-header { padding: 14px 18px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
-  .table-title { font-size: 13px; font-weight: 600; }
-  table { width: 100%; border-collapse: collapse; }
-  thead th { padding: 10px 14px; text-align: left; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); font-weight: 600; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
-  thead th:first-child { padding-left: 18px; }
-  tbody tr { border-bottom: 1px solid var(--gray-200); transition: background 0.1s; cursor: pointer; animation: fadeIn 0.3s ease both; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #fafafa; }
-  tbody td { padding: 12px 14px; font-size: 13px; color: var(--gray-700); vertical-align: middle; }
-  tbody td:first-child { padding-left: 18px; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+/* CONTENT */
+.content { padding:20px 24px; }
 
-  .company-name { font-weight: 600; color: var(--black); font-size: 13px; }
-  .company-web { font-size: 11px; color: var(--gray-400); }
-  .contact-name { font-weight: 500; color: var(--black); font-size: 13px; }
-  .contact-email { font-size: 11px; color: var(--gray-400); }
-  .feria-tag { background: var(--red-light); color: var(--red-dark); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; max-width: 130px; display: inline-block; overflow: hidden; text-overflow: ellipsis; }
-  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
-  .badge-opened { background: var(--opened-bg); color: var(--opened); } .badge-opened::before { background: var(--opened); }
-  .badge-click { background: var(--click-bg); color: var(--click); } .badge-click::before { background: var(--click); }
-  .badge-sent { background: var(--sent-bg); color: var(--sent); } .badge-sent::before { background: var(--sent); }
-  .badge-error { background: var(--error-bg); color: var(--error); } .badge-error::before { background: var(--error); }
-  .badge-enviado { background: #eef2ff; color: #3730a3; } .badge-enviado::before { background: #3730a3; }
+/* KPI GRID */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px; }
+.kpi {
+  background:var(--white); border-radius:var(--radius); padding:16px 18px;
+  border:1px solid var(--gray-200); box-shadow:var(--shadow);
+  position:relative; overflow:hidden; transition:transform .15s, box-shadow .15s;
+}
+.kpi:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+.kpi-accent { position:absolute; top:0; left:0; right:0; height:3px; background:var(--red); border-radius:var(--radius) var(--radius) 0 0; }
+.kpi-accent.g { background:var(--green); }
+.kpi-accent.b { background:var(--blue); }
+.kpi-accent.a { background:var(--amber); }
+.kpi-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--gray-400); margin-bottom:8px; }
+.kpi-val { font-family:'Bebas Neue',sans-serif; font-size:38px; letter-spacing:1px; line-height:1; color:var(--black); }
+.kpi-val.g { color:var(--green); }
+.kpi-val.b { color:var(--blue); }
+.kpi-val.a { color:var(--amber); }
+.kpi-sub { font-size:11px; color:var(--gray-400); margin-top:5px; font-weight:500; }
 
-  .crm-select { border: 1px solid var(--gray-200); border-radius: 6px; padding: 4px 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; background: var(--gray-100); cursor: pointer; outline: none; color: var(--black); transition: border-color 0.15s; }
-  .crm-select:focus { border-color: var(--red); }
-  .crm-select.saving { border-color: var(--opened); background: var(--opened-bg); }
+/* FILTER BAR */
+.filter-bar {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:12px 16px; display:flex; align-items:center; gap:10px; margin-bottom:16px;
+  flex-wrap:wrap; box-shadow:var(--shadow);
+}
+.filter-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--gray-400); }
+.filter-sep { width:1px; height:20px; background:var(--gray-200); }
+.select-styled {
+  border:1.5px solid var(--gray-200); border-radius:8px; padding:6px 12px;
+  font-family:'Outfit',sans-serif; font-size:13px; color:var(--black);
+  background:var(--gray-100); cursor:pointer; outline:none; font-weight:500;
+  transition:border-color .15s;
+}
+.select-styled:focus { border-color:var(--red); }
+.chip {
+  padding:5px 13px; border-radius:99px; font-size:12px; font-weight:600;
+  cursor:pointer; border:1.5px solid var(--gray-200); background:var(--white);
+  color:var(--gray-500); transition:all .15s; white-space:nowrap;
+}
+.chip:hover { border-color:var(--red); color:var(--red); }
+.chip.on { border-color:var(--red); color:var(--red); background:var(--red-light); }
+.chip.on-g { border-color:var(--green); color:var(--green); background:var(--green-bg); }
+.chip.on-b { border-color:var(--blue); color:var(--blue); background:var(--blue-bg); }
+.chip.on-a { border-color:var(--amber); color:var(--amber); background:var(--amber-bg); }
+.filter-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.filter-count { font-size:12px; color:var(--gray-400); font-weight:500; }
 
-  .action-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--gray-200); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.15s; color: var(--gray-400); }
-  .action-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+/* TABLE */
+.table-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.table-head { padding:12px 18px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.table-head-title { font-size:13px; font-weight:600; color:var(--black); }
+table { width:100%; border-collapse:collapse; }
+thead th {
+  padding:9px 14px; text-align:left; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--gray-400); font-weight:600;
+  background:var(--gray-100); border-bottom:1px solid var(--gray-200); white-space:nowrap;
+}
+thead th:first-child { padding-left:18px; }
+tbody tr { border-bottom:1px solid var(--gray-200); cursor:pointer; transition:background .1s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:#fafafa; }
+tbody tr:hover .row-actions { opacity:1; }
+tbody td { padding:11px 14px; vertical-align:middle; }
+tbody td:first-child { padding-left:18px; }
 
-  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-top: 1px solid var(--gray-200); font-size: 12px; color: var(--gray-400); }
-  .page-btns { display: flex; gap: 4px; }
-  .page-btn { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--gray-200); background: var(--white); cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--gray-700); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .page-btn:hover, .page-btn.active { background: var(--red); color: white; border-color: var(--red); }
+.co-name { font-weight:600; color:var(--black); font-size:13px; line-height:1.3; }
+.co-web { font-size:11px; color:var(--gray-400); margin-top:2px; }
+.ct-name { font-weight:500; color:var(--black); font-size:13px; }
+.ct-email { font-size:11px; color:var(--gray-400); margin-top:1px; }
+.feria-pill { display:inline-block; padding:3px 9px; border-radius:6px; font-size:11px; font-weight:600; background:var(--red-light); color:var(--red-dark); max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.country { font-size:12px; color:var(--gray-500); font-weight:500; }
 
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: white; padding: 12px 20px; border-radius: 10px; font-size: 13px; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px; border-left: 3px solid var(--red); }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-left-color: var(--opened); }
-  .toast.error { border-left-color: var(--error); }
+.badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:99px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge::before { content:''; width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.badge-opened { background:var(--green-bg); color:var(--green); } .badge-opened::before { background:var(--green); }
+.badge-click { background:var(--blue-bg); color:var(--blue); } .badge-click::before { background:var(--blue); }
+.badge-sent { background:var(--gray-100); color:var(--gray-500); } .badge-sent::before { background:var(--gray-400); }
+.badge-error { background:var(--amber-bg); color:var(--amber); } .badge-error::before { background:var(--amber); }
+.badge-enviado { background:#eef2ff; color:#4338ca; } .badge-enviado::before { background:#4338ca; }
 
-  /* Modal */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--white); border-radius: 16px; width: 540px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideUp 0.2s ease; }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: flex-start; justify-content: space-between; }
-  .modal-company { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
-  .modal-id { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
-  .modal-close { background: var(--gray-100); border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 16px; color: var(--gray-700); display: flex; align-items: center; justify-content: center; }
-  .modal-close:hover { background: var(--red-light); color: var(--red); }
-  .modal-body { padding: 20px 24px; }
-  .modal-section { margin-bottom: 20px; }
-  .modal-section-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); font-weight: 600; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--gray-200); }
-  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .modal-field label { font-size: 11px; color: var(--gray-400); font-weight: 500; display: block; margin-bottom: 3px; }
-  .modal-field p { font-size: 13px; color: var(--black); font-weight: 500; }
-  .modal-field a { font-size: 13px; color: var(--red); text-decoration: none; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; justify-content: flex-end; }
+.crm-sel {
+  border:1.5px solid var(--gray-200); border-radius:7px; padding:4px 8px;
+  font-family:'Outfit',sans-serif; font-size:12px; font-weight:500;
+  background:var(--gray-100); cursor:pointer; outline:none; color:var(--black);
+  transition:all .15s; max-width:160px;
+}
+.crm-sel:hover { border-color:var(--red); }
+.crm-sel:focus { border-color:var(--red); background:var(--white); }
+.crm-sel.saving { border-color:var(--green); background:var(--green-bg); color:var(--green); }
 
-  .empty-state { text-align: center; padding: 48px; color: var(--gray-400); }
-  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
+.row-actions { display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+.act-btn {
+  width:30px; height:30px; border-radius:8px; border:1.5px solid var(--gray-200);
+  background:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:var(--gray-400); transition:all .15s;
+}
+.act-btn:hover { transform:scale(1.1); }
+.act-btn.email:hover { border-color:#4338ca; color:#4338ca; background:#eef2ff; }
+.act-btn.call:hover { border-color:var(--green); color:var(--green); background:var(--green-bg); }
+.act-btn.view:hover { border-color:var(--red); color:var(--red); background:var(--red-light); }
 
-  #errorBanner { display: none; background: var(--error-bg); border: 1px solid #f5c2a0; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: var(--error); }
+/* PAGINATION */
+.pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-top:1px solid var(--gray-200); }
+.page-info { font-size:12px; color:var(--gray-400); font-weight:500; }
+.page-btns { display:flex; gap:4px; }
+.page-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-200); background:var(--white); cursor:pointer; font-size:12px; font-family:'Outfit',sans-serif; font-weight:600; color:var(--gray-600); display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.page-btn:hover { border-color:var(--red); color:var(--red); }
+.page-btn.active { background:var(--red); color:var(--white); border-color:var(--red); }
+.page-btn:disabled { opacity:.3; cursor:not-allowed; }
+
+/* EMPTY */
+.empty { text-align:center; padding:56px 20px; color:var(--gray-400); }
+.empty-ico { font-size:40px; margin-bottom:12px; opacity:.5; }
+.empty p { font-size:14px; font-weight:500; }
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:300; align-items:center; justify-content:center; backdrop-filter:blur(3px); }
+.overlay.open { display:flex; animation:fadeIn .15s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal {
+  background:var(--white); border-radius:18px; width:560px; max-height:88vh;
+  overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,.18);
+  animation:slideUp .2s cubic-bezier(.16,1,.3,1);
+}
+@keyframes slideUp { from{transform:translateY(16px);opacity:0} to{transform:none;opacity:1} }
+.modal-top { padding:22px 24px 18px; border-bottom:1px solid var(--gray-200); display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.modal-company-name { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:1px; line-height:1.1; }
+.modal-id-tag { display:inline-flex; align-items:center; padding:3px 9px; background:var(--gray-100); border-radius:6px; font-size:11px; color:var(--gray-500); font-weight:600; margin-top:5px; font-family:monospace; }
+.modal-close { width:32px; height:32px; border-radius:9px; border:1.5px solid var(--gray-200); background:var(--white); cursor:pointer; font-size:16px; color:var(--gray-500); display:flex; align-items:center; justify-content:center; transition:all .15s; flex-shrink:0; }
+.modal-close:hover { background:var(--red-light); color:var(--red); border-color:var(--red-mid); }
+.modal-body { padding:20px 24px; display:flex; flex-direction:column; gap:20px; }
+.modal-section-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gray-400); padding-bottom:10px; border-bottom:1px solid var(--gray-200); margin-bottom:14px; }
+.modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.mf label { font-size:11px; color:var(--gray-400); font-weight:600; display:block; margin-bottom:4px; letter-spacing:.5px; }
+.mf p { font-size:13px; color:var(--black); font-weight:500; }
+.mf a { font-size:13px; color:var(--red); text-decoration:none; font-weight:500; }
+.mf a:hover { text-decoration:underline; }
+
+/* Pipeline */
+.pipeline { display:flex; align-items:center; gap:0; margin-bottom:6px; }
+.pip-step { display:flex; flex-direction:column; align-items:center; gap:5px; flex:1; }
+.pip-dot { width:30px; height:30px; border-radius:50%; background:var(--gray-100); border:2px solid var(--gray-200); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--gray-400); position:relative; z-index:1; transition:all .2s; }
+.pip-dot.done { background:var(--green); border-color:var(--green); color:var(--white); }
+.pip-dot.active { background:var(--red); border-color:var(--red); color:var(--white); box-shadow:0 0 0 4px rgba(200,16,46,.15); }
+.pip-label { font-size:10px; color:var(--gray-400); text-align:center; white-space:nowrap; font-weight:500; }
+.pip-line { flex:1; height:2px; background:var(--gray-200); margin-top:-18px; margin-bottom:auto; }
+.pip-line.done { background:var(--green); }
+
+/* Action buttons in modal */
+.modal-actions { display:flex; gap:10px; padding:16px 24px; border-top:1px solid var(--gray-200); }
+.modal-actions .btn { flex:1; justify-content:center; }
+.btn-email { background:#eef2ff; color:#4338ca; border:1.5px solid #c7d2fe; }
+.btn-email:hover { background:#4338ca; color:var(--white); }
+.btn-call { background:var(--green-bg); color:var(--green); border:1.5px solid #a7f3d0; }
+.btn-call:hover { background:var(--green); color:var(--white); }
+.btn-save { background:var(--red); color:var(--white); }
+.btn-save:hover { background:var(--red-dark); }
+
+/* CRM select in modal */
+.modal-crm-sel { width:100%; border:1.5px solid var(--gray-200); border-radius:9px; padding:10px 14px; font-family:'Outfit',sans-serif; font-size:13px; font-weight:500; color:var(--black); background:var(--gray-100); outline:none; cursor:pointer; transition:border-color .15s; }
+.modal-crm-sel:focus { border-color:var(--red); background:var(--white); }
+
+/* TOAST */
+.toast { position:fixed; bottom:20px; right:20px; z-index:999; transform:translateY(80px); opacity:0; transition:all .3s cubic-bezier(.16,1,.3,1); pointer-events:none; }
+.toast.show { transform:none; opacity:1; }
+.toast-inner { background:var(--black); color:var(--white); padding:12px 18px; border-radius:10px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-lg); border-left:3px solid var(--red); }
+.toast-inner.ok { border-left-color:var(--green); }
+.toast-inner.err { border-left-color:var(--amber); }
+
+/* ERROR BANNER */
+.err-banner { display:none; background:var(--amber-bg); border:1px solid #fcd34d; border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:var(--amber); font-weight:500; }
+
+/* ANIMATIONS */
+tbody tr { animation:rowIn .25s ease both; }
+@keyframes rowIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
 </style>
 </head>
 <body>
 
-<!-- ═══ AUTH SCREEN ═══ -->
+<!-- AUTH -->
 <div id="authScreen">
-  <div class="auth-card">
-    <div class="auth-logo">RESA</div>
-    <div class="auth-sub">CRM Expositores</div>
-    <div class="auth-title">Conectar con Google Sheets</div>
-    <div class="auth-desc">Introduce los datos de tu proyecto Google Cloud para conectar el CRM a tu Spreadsheet directamente.</div>
-
-    <div class="config-section">
-      <div class="config-label">Client ID de Google OAuth 2.0</div>
-      <input class="config-input" id="clientIdInput" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com">
-      <div class="config-label">ID del Google Sheet</div>
-      <input class="config-input" id="sheetIdInput" type="text" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
-      <div class="config-label">Nombre de la hoja (pestaña)</div>
-      <input class="config-input" id="sheetNameInput" type="text" placeholder="CONTACTO EXPOSITORES" value="CONTACTO EXPOSITORES">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-logo">RESA</div>
+      <div class="auth-tagline">CRM · Gestión de Expositores</div>
     </div>
-
-    <button class="btn-google" id="authBtn" onclick="startAuth()" disabled>
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#fff" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/><path fill="#fff" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#fff" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/><path fill="#fff" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/></svg>
-      Conectar con Google
-    </button>
-    <p class="auth-note">Los datos permanecen en tu Google Workspace. Esta app nunca almacena credenciales.</p>
-
-    <hr class="auth-divider">
-    <div class="auth-steps">
-      <div class="auth-step"><div class="step-num">1</div><div class="step-text">Ve a <strong>console.cloud.google.com</strong> → APIs → Credenciales → Crear ID de cliente OAuth</div></div>
-      <div class="auth-step"><div class="step-num">2</div><div class="step-text">Tipo: <strong>Aplicación web</strong>. Añade tu dominio en "Orígenes JS autorizados"</div></div>
-      <div class="auth-step"><div class="step-num">3</div><div class="step-text">Activa la <strong>Google Sheets API</strong> en tu proyecto</div></div>
-      <div class="auth-step"><div class="step-num">4</div><div class="step-text">Pega el Client ID arriba y el ID del Sheet (está en la URL del Sheet)</div></div>
+    <div class="auth-card">
+      <h2>Conectar a Google Sheets</h2>
+      <p>Introduce los datos de tu proyecto Google Cloud para acceder al CRM en tiempo real.</p>
+      <div class="field-group">
+        <label>Client ID OAuth 2.0</label>
+        <input id="inClientId" type="text" placeholder="xxxxxx.apps.googleusercontent.com">
+      </div>
+      <div class="field-group">
+        <label>ID del Google Sheet</label>
+        <input id="inSheetId" type="text" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+      </div>
+      <div class="field-group">
+        <label>Nombre de la pestaña</label>
+        <input id="inSheetName" type="text" value="CONTACTO EXPOSITORES">
+      </div>
+      <button class="btn-connect" id="authBtn" onclick="startAuth()" disabled>
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#fff" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/><path fill="#fff" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#fff" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/><path fill="#fff" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/></svg>
+        Conectar con Google
+      </button>
+      <div class="auth-divider"><span></span><p>Cómo configurarlo</p><span></span></div>
+      <div class="setup-steps">
+        <div class="setup-step"><div class="step-n">1</div><p>Ve a <strong>console.cloud.google.com</strong> → Activa la <strong>Google Sheets API</strong></p></div>
+        <div class="setup-step"><div class="step-n">2</div><p>Credenciales → <strong>ID de cliente OAuth</strong> → Tipo: Aplicación web</p></div>
+        <div class="setup-step"><div class="step-n">3</div><p>Añade <strong>https://elek-collab.github.io</strong> en Orígenes JS autorizados</p></div>
+        <div class="setup-step"><div class="step-n">4</div><p>Copia el <strong>Client ID</strong> y el ID del Sheet desde su URL</p></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ LOADING ═══ -->
-<div id="loadingScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;background:var(--black);flex-direction:column;gap:16px;">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Cargando datos...</div>
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <div class="loader-text" id="loadingText">Cargando expositores...</div>
 </div>
 
-<!-- ═══ APP ═══ -->
-<div id="appScreen" style="display:none;">
+<!-- APP -->
+<div id="appScreen">
 <div class="layout">
+
   <aside class="sidebar">
-    <div class="logo-area">
-      <div class="logo-title">RESA</div>
-      <div class="logo-sub">CRM Expositores</div>
+    <div class="sidebar-brand">
+      <div class="brand-logo">RESA</div>
+      <div class="brand-sub">CRM Expositores</div>
     </div>
-    <nav class="nav">
-      <div class="nav-label">Principal</div>
-      <div class="nav-item active">◈ &nbsp;Dashboard</div>
-      <div class="nav-item">⊞ &nbsp;Expositores <span class="nav-badge" id="navTotal">—</span></div>
-      <div class="nav-item">◉ &nbsp;Pipeline <span class="nav-badge" style="background:var(--opened)" id="navOpened">—</span></div>
-      <div class="nav-label">Ferias</div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-link active"><span class="ico">◈</span> Dashboard</div>
+      <div class="nav-link"><span class="ico">⊞</span> Expositores <span class="nav-badge" id="navTotal">—</span></div>
+      <div class="nav-link"><span class="ico">◎</span> Pipeline <span class="nav-badge green" id="navOpened">—</span></div>
+      <div class="nav-section">Ferias</div>
       <div id="navFerias"></div>
-      <div class="nav-label">Gestión</div>
-      <div class="nav-item">⚡ &nbsp;Campañas</div>
-      <div class="nav-item" onclick="logout()">⎋ &nbsp;Cerrar sesión</div>
+      <div class="nav-section">Gestión</div>
+      <div class="nav-link"><span class="ico">⚡</span> Campañas</div>
+      <div class="nav-link" onclick="openSettings()"><span class="ico">⚙</span> Configuración</div>
     </nav>
-    <div class="user-chip">
-      <div class="user-avatar" id="userAvatar">?</div>
+    <div class="sidebar-footer">
+      <div class="user-av" id="userAv">?</div>
       <div class="user-name" id="userName">—</div>
+      <button class="logout-btn" onclick="logout()" title="Cerrar sesión">⎋</button>
     </div>
   </aside>
 
   <div class="main">
     <header class="topbar">
-      <div class="topbar-title">CRM · Expositores</div>
+      <div class="topbar-left">
+        <div class="topbar-title">CRM · Expositores</div>
+      </div>
       <div class="topbar-right">
-        <button class="sync-btn" id="syncBtn" onclick="syncData()">
-          <span class="sync-icon">↻</span> Sincronizar
-        </button>
-        <div class="search-box">
-          <span style="color:#aaa;font-size:14px">🔍</span>
-          <input type="text" id="searchInput" placeholder="Buscar empresa, contacto, feria..." oninput="filterTable()">
+        <button class="btn btn-secondary" id="syncBtn" onclick="syncData()">↻ Sincronizar</button>
+        <div class="search-wrap">
+          <span class="search-ico">🔍</span>
+          <input type="text" id="searchInput" placeholder="Buscar empresa, contacto, email, feria..." oninput="filterTable()">
         </div>
-        <button class="btn-primary" onclick="window.open('https://docs.google.com/spreadsheets/d/'+CONFIG.sheetId,'_blank')">↗ Abrir Sheet</button>
+        <button class="btn btn-primary" onclick="window.open('https://docs.google.com/spreadsheets/d/'+CFG.sheetId,'_blank')">↗ Sheet</button>
       </div>
     </header>
 
     <div class="content">
-      <div id="errorBanner"></div>
+      <div class="err-banner" id="errBanner"></div>
 
-      <div class="kpi-row">
-        <div class="kpi-card"><div class="kpi-label">Total</div><div class="kpi-value" id="kpiTotal">—</div><div class="kpi-sub" id="kpiFerias">— ferias</div></div>
-        <div class="kpi-card"><div class="kpi-label">Enviados</div><div class="kpi-value" id="kpiEnviados">—</div><div class="kpi-sub" id="kpiEnviadosPct">—</div></div>
-        <div class="kpi-card green"><div class="kpi-label">Abiertos</div><div class="kpi-value" style="color:var(--opened)" id="kpiOpened">—</div><div class="kpi-sub" id="kpiOpenedPct">—</div></div>
-        <div class="kpi-card blue"><div class="kpi-label">Clicks</div><div class="kpi-value" style="color:var(--click)" id="kpiClicks">—</div><div class="kpi-sub" id="kpiClicksPct">—</div></div>
-        <div class="kpi-card orange"><div class="kpi-label">Errores</div><div class="kpi-value" style="color:var(--error)" id="kpiErrors">—</div><div class="kpi-sub">Revisar emails</div></div>
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-accent"></div><div class="kpi-label">Total</div><div class="kpi-val" id="kTotal">—</div><div class="kpi-sub" id="kFeriasN">— ferias</div></div>
+        <div class="kpi"><div class="kpi-accent"></div><div class="kpi-label">Enviados</div><div class="kpi-val" id="kEnviados">—</div><div class="kpi-sub" id="kEnvPct">—</div></div>
+        <div class="kpi"><div class="kpi-accent g"></div><div class="kpi-label">Abiertos</div><div class="kpi-val g" id="kOpened">—</div><div class="kpi-sub" id="kOpenPct">—</div></div>
+        <div class="kpi"><div class="kpi-accent b"></div><div class="kpi-label">Clicks</div><div class="kpi-val b" id="kClicks">—</div><div class="kpi-sub" id="kClickPct">—</div></div>
+        <div class="kpi"><div class="kpi-accent a"></div><div class="kpi-label">Errores</div><div class="kpi-val a" id="kErrors">—</div><div class="kpi-sub">Revisar emails</div></div>
       </div>
 
-      <div class="filters-bar">
-        <span class="filter-label">Feria:</span>
-        <select class="filter-select" id="feriaFilter" onchange="filterTable()"><option value="">Todas</option></select>
-        <span class="filter-label" style="margin-left:8px">Estado:</span>
-        <span class="filter-chip active" onclick="toggleChip(this,'all')">Todos</span>
-        <span class="filter-chip" onclick="toggleChip(this,'opened')">🟢 Abiertos</span>
-        <span class="filter-chip" onclick="toggleChip(this,'click')">🔵 Clicks</span>
-        <span class="filter-chip" onclick="toggleChip(this,'sent')">⚪ Enviados</span>
-        <span class="filter-chip" onclick="toggleChip(this,'error')">🔴 Errores</span>
-        <span class="filter-count" id="rowCount"></span>
+      <!-- FILTERS -->
+      <div class="filter-bar">
+        <span class="filter-label">Feria</span>
+        <select class="select-styled" id="feriaFilter" onchange="filterTable()"><option value="">Todas</option></select>
+        <div class="filter-sep"></div>
+        <span class="filter-label">Estado</span>
+        <span class="chip on" onclick="setChip(this,'all')">Todos</span>
+        <span class="chip" onclick="setChip(this,'opened')">● Abiertos</span>
+        <span class="chip" onclick="setChip(this,'click')">● Clicks</span>
+        <span class="chip" onclick="setChip(this,'sent')">● Enviados</span>
+        <span class="chip" onclick="setChip(this,'error')">● Errores</span>
+        <div class="filter-sep"></div>
+        <span class="filter-label">CRM</span>
+        <select class="select-styled" id="crmFilter" onchange="filterTable()">
+          <option value="">Todos</option>
+          <option>🔵 Nuevo</option>
+          <option>📧 Contactado</option>
+          <option>👁 Ha abierto</option>
+          <option>📞 Llamar</option>
+          <option>💬 Negociando</option>
+          <option>✅ Cerrado</option>
+          <option>❌ Descartado</option>
+        </select>
+        <div class="filter-right">
+          <span class="filter-count" id="filterCount">—</span>
+          <button class="btn btn-secondary" onclick="exportCSV()" style="font-size:12px;padding:6px 12px">↓ CSV</button>
+        </div>
       </div>
 
-      <div class="table-wrap">
-        <div class="table-header">
-          <div class="table-title">Listado de Expositores</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn-ghost" onclick="exportCSV()">↓ Exportar CSV</button>
-          </div>
+      <!-- TABLE -->
+      <div class="table-card">
+        <div class="table-head">
+          <div class="table-head-title">Listado de Expositores</div>
         </div>
         <table>
           <thead>
@@ -384,11 +478,11 @@
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="tableBody"></tbody>
+          <tbody id="tbody"></tbody>
         </table>
         <div class="pagination">
-          <span id="paginationInfo"></span>
-          <div class="page-btns" id="pageButtons"></div>
+          <div class="page-info" id="pageInfo"></div>
+          <div class="page-btns" id="pageBtns"></div>
         </div>
       </div>
     </div>
@@ -396,423 +490,436 @@
 </div>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-header">
-      <div><div class="modal-company" id="modalCompany"></div><div class="modal-id" id="modalId"></div></div>
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-top">
+      <div>
+        <div class="modal-company-name" id="mName"></div>
+        <div><span class="modal-id-tag" id="mId"></span></div>
+      </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="modal-section">
-        <div class="modal-section-title">Empresa</div>
+
+      <div>
+        <div class="modal-section-title">Datos de Empresa</div>
         <div class="modal-grid">
-          <div class="modal-field"><label>Feria</label><p id="mFeria"></p></div>
-          <div class="modal-field"><label>Recinto</label><p id="mRecinto"></p></div>
-          <div class="modal-field"><label>Web</label><a id="mWeb" href="#" target="_blank"></a></div>
-          <div class="modal-field"><label>País</label><p id="mPais"></p></div>
+          <div class="mf"><label>Feria</label><p id="mFeria"></p></div>
+          <div class="mf"><label>Recinto</label><p id="mRecinto"></p></div>
+          <div class="mf"><label>Web</label><a id="mWeb" href="#" target="_blank"></a></div>
+          <div class="mf"><label>País</label><p id="mPais"></p></div>
         </div>
       </div>
-      <div class="modal-section">
+
+      <div>
         <div class="modal-section-title">Contacto</div>
         <div class="modal-grid">
-          <div class="modal-field"><label>Nombre</label><p id="mNombre"></p></div>
-          <div class="modal-field"><label>Cargo</label><p id="mCargo"></p></div>
-          <div class="modal-field"><label>Email</label><a id="mEmail" href="#"></a></div>
-          <div class="modal-field"><label>Teléfono</label><p id="mTel"></p></div>
+          <div class="mf"><label>Nombre</label><p id="mContacto"></p></div>
+          <div class="mf"><label>Cargo</label><p id="mCargo"></p></div>
+          <div class="mf"><label>Email</label><a id="mEmail" href="#"></a></div>
+          <div class="mf"><label>Teléfono</label><p id="mTel"></p></div>
         </div>
       </div>
-      <div class="modal-section">
+
+      <div>
+        <div class="modal-section-title">Pipeline Comercial</div>
+        <div class="pipeline" id="mPipeline"></div>
+      </div>
+
+      <div>
         <div class="modal-section-title">Estado CRM</div>
-        <select class="filter-select" id="modalCRMSelect" style="width:100%">
+        <select class="modal-crm-sel" id="mCrmSel">
           <option value="">— Sin estado —</option>
-          <option value="🔵 Nuevo">🔵 Nuevo contacto</option>
-          <option value="📧 Contactado">📧 Email enviado</option>
-          <option value="👁 Ha abierto">👁 Ha abierto el email</option>
-          <option value="📞 Llamar">📞 Pendiente llamada</option>
-          <option value="💬 Negociando">💬 En negociación</option>
-          <option value="✅ Cerrado">✅ Cliente cerrado</option>
-          <option value="❌ Descartado">❌ Descartado</option>
+          <option>🔵 Nuevo</option>
+          <option>📧 Contactado</option>
+          <option>👁 Ha abierto</option>
+          <option>📞 Llamar</option>
+          <option>💬 Negociando</option>
+          <option>✅ Cerrado</option>
+          <option>❌ Descartado</option>
         </select>
       </div>
+
     </div>
-    <div class="modal-footer">
-      <button class="btn-ghost" id="modalEmailBtn">✉ Email</button>
-      <button class="btn-primary" onclick="saveModalCRM()">💾 Guardar</button>
+    <div class="modal-actions">
+      <button class="btn btn-email" id="mBtnEmail" onclick="doEmail()">✉ Enviar email</button>
+      <button class="btn btn-call" id="mBtnCall" onclick="doCall()">📞 Llamar</button>
+      <button class="btn btn-save" onclick="saveModal()">💾 Guardar</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-inner" id="toastInner"></div></div>
 
 <script>
-// ─── CONFIG ───
-const CONFIG = { clientId: '', sheetId: '', sheetName: 'CONTACTO EXPOSITORES' };
+// ── CONFIG ──
+const CFG = { clientId:'', sheetId:'', sheetName:'CONTACTO EXPOSITORES' };
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-let accessToken = null;
-let allData = [];
-let filteredData = [];
-let currentFilter = 'all';
-let currentPage = 1;
-const PER_PAGE = 20;
-let modalRowIdx = -1;
-let crmStateCol = -1; // índice de columna para Estado CRM
+let token = null, allData = [], filtered = [], chipFilter = 'all', page = 1;
+const PER = 20;
+let modalIdx = -1;
 
-// ─── COLUMN MAP (0-indexed) ───
-const COL = {
-  ID: 0, EVENTO: 1, RECINTO: 2, EMPRESA: 3, WEB: 4,
-  EMAIL_GEN: 5, CONTACTO: 6, EMAIL_DIR: 7, TEL: 8,
-  CARGO: 9, PAIS: 10, PLANTILLA: 11, DIA: 12, HORA: 13,
-  FORZAR: 14, ESTADO_ENVIO: 15, BREVO: 16, ID_MENSAJE: 17,
-  CRM_ESTADO: 18  // columna S — la añadimos si no existe
-};
+const COL = { ID:0,EVENTO:1,RECINTO:2,EMPRESA:3,WEB:4,EMAIL_GEN:5,CONTACTO:6,EMAIL_DIR:7,TEL:8,CARGO:9,PAIS:10,PLANTILLA:11,DIA:12,HORA:13,FORZAR:14,ESTADO_ENVIO:15,BREVO:16,ID_MSG:17,CRM:18 };
 
-// ─── INIT ───
-document.getElementById('clientIdInput').addEventListener('input', checkAuthReady);
-document.getElementById('sheetIdInput').addEventListener('input', checkAuthReady);
-function checkAuthReady() {
-  const ok = document.getElementById('clientIdInput').value.trim() &&
-             document.getElementById('sheetIdInput').value.trim();
-  document.getElementById('authBtn').disabled = !ok;
+// ── AUTH ──
+['inClientId','inSheetId'].forEach(id => document.getElementById(id).addEventListener('input', checkReady));
+function checkReady() {
+  document.getElementById('authBtn').disabled =
+    !(document.getElementById('inClientId').value.trim() && document.getElementById('inSheetId').value.trim());
 }
 
 function startAuth() {
-  CONFIG.clientId = document.getElementById('clientIdInput').value.trim();
-  CONFIG.sheetId  = document.getElementById('sheetIdInput').value.trim();
-  CONFIG.sheetName = document.getElementById('sheetNameInput').value.trim() || 'CONTACTO EXPOSITORES';
+  CFG.clientId = document.getElementById('inClientId').value.trim();
+  CFG.sheetId  = document.getElementById('inSheetId').value.trim();
+  CFG.sheetName = document.getElementById('inSheetName').value.trim() || 'CONTACTO EXPOSITORES';
 
-  const client = google.accounts.oauth2.initTokenClient({
-    client_id: CONFIG.clientId,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if (resp.error) { showToast('Error de autenticación: ' + resp.error, 'error'); return; }
-      accessToken = resp.access_token;
-      await getUserInfo();
+  // Save to localStorage for convenience
+  try { localStorage.setItem('resa_cfg', JSON.stringify(CFG)); } catch(e){}
+
+  google.accounts.oauth2.initTokenClient({
+    client_id: CFG.clientId, scope: SCOPES,
+    callback: async (r) => {
+      if (r.error) { toast('Error OAuth: '+r.error,'err'); return; }
+      token = r.access_token;
+      await getUser();
       showLoading('Cargando expositores...');
       await loadSheet();
     }
-  });
-  client.requestAccessToken();
+  }).requestAccessToken();
 }
 
-async function getUserInfo() {
+// Restore config from localStorage
+window.addEventListener('DOMContentLoaded', () => {
   try {
-    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: 'Bearer ' + accessToken }
-    });
-    const u = await r.json();
-    document.getElementById('userName').textContent = u.name || u.email;
-    if (u.picture) document.getElementById('userAvatar').innerHTML = `<img src="${u.picture}">`;
-    else document.getElementById('userAvatar').textContent = (u.name||'U')[0].toUpperCase();
-  } catch(e) {}
+    const saved = JSON.parse(localStorage.getItem('resa_cfg')||'{}');
+    if (saved.clientId) document.getElementById('inClientId').value = saved.clientId;
+    if (saved.sheetId)  document.getElementById('inSheetId').value  = saved.sheetId;
+    if (saved.sheetName) document.getElementById('inSheetName').value = saved.sheetName;
+    checkReady();
+  } catch(e){}
+});
+
+async function getUser() {
+  try {
+    const u = await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+token}})).json();
+    document.getElementById('userName').textContent = u.name||u.email||'Usuario';
+    const av = document.getElementById('userAv');
+    if (u.picture) av.innerHTML = `<img src="${u.picture}">`;
+    else av.textContent = (u.name||'U')[0].toUpperCase();
+  } catch(e){}
 }
 
-function showLoading(msg) {
-  document.getElementById('authScreen').style.display = 'none';
-  document.getElementById('loadingScreen').style.display = 'flex';
-  document.getElementById('loadingText').textContent = msg;
-  document.getElementById('appScreen').style.display = 'none';
+function showLoading(msg='Cargando...') {
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('loadingScreen').style.display='flex';
+  document.getElementById('loadingText').textContent=msg;
+  document.getElementById('appScreen').style.display='none';
 }
-
 function showApp() {
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('loadingScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
 }
 
-// ─── LOAD SHEET ───
+// ── LOAD SHEET ──
 async function loadSheet() {
   try {
-    const range = encodeURIComponent(`${CONFIG.sheetName}!A1:S2000`);
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}`;
-    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
-    if (!r.ok) throw new Error(`HTTP ${r.status}: ${await r.text()}`);
-    const data = await r.json();
-    const rows = data.values || [];
-    if (rows.length < 2) throw new Error('El Sheet está vacío o no se encontró la hoja.');
-
-    // Check if CRM Estado column exists (col S = index 18)
+    const range = encodeURIComponent(`${CFG.sheetName}!A1:T3000`);
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CFG.sheetId}/values/${range}`,
+      {headers:{Authorization:'Bearer '+token}});
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    const rows = d.values||[];
+    if (rows.length < 2) throw new Error('Hoja vacía o no encontrada');
     const header = rows[0];
-    if (header.length <= 18 || header[18] !== 'Estado CRM') {
-      await addCRMColumn(header.length);
+    if (header.length <= COL.CRM || header[COL.CRM] !== 'Estado CRM') {
+      await putCell(`${CFG.sheetName}!S1`, 'Estado CRM');
     }
-
     allData = rows.slice(1).filter(r => r[COL.EMPRESA]);
     buildUI();
     showApp();
   } catch(e) {
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('authScreen').style.display = 'flex';
-    showToast('Error cargando Sheet: ' + e.message, 'error');
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('authScreen').style.display='flex';
+    toast('Error: '+e.message,'err');
   }
 }
 
-async function addCRMColumn(existingCols) {
-  // Add header "Estado CRM" in column S (index 18)
-  const colLetter = colToLetter(19); // 1-indexed → S
-  const range = encodeURIComponent(`${CONFIG.sheetName}!${colLetter}1`);
-  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}?valueInputOption=USER_ENTERED`, {
-    method: 'PUT',
-    headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [['Estado CRM']] })
+async function putCell(range, value) {
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CFG.sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`,{
+    method:'PUT', headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+    body:JSON.stringify({values:[[value]]})
   });
 }
 
-function colToLetter(col) {
-  let s = '';
-  while (col > 0) { col--; s = String.fromCharCode(65 + col % 26) + s; col = Math.floor(col / 26); }
-  return s;
-}
-
-// ─── SAVE CRM STATE ───
-async function saveCRMState(rowIdx, value) {
-  // rowIdx is 0-based in allData → sheet row = rowIdx + 2 (1 header + 1-based)
+async function saveCRM(rowIdx, value) {
   const sheetRow = allData.indexOf(allData[rowIdx]) + 2;
-  const range = encodeURIComponent(`${CONFIG.sheetName}!S${sheetRow}`);
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}?valueInputOption=USER_ENTERED`;
-  const r = await fetch(url, {
-    method: 'PUT',
-    headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ values: [[value]] })
-  });
-  if (!r.ok) throw new Error('Error guardando: ' + r.status);
-  allData[rowIdx][COL.CRM_ESTADO] = value;
+  await putCell(`${CFG.sheetName}!S${sheetRow}`, value);
+  allData[rowIdx][COL.CRM] = value;
 }
 
-// ─── SYNC ───
 async function syncData() {
   const btn = document.getElementById('syncBtn');
-  btn.classList.add('syncing');
-  btn.querySelector('.sync-icon').textContent = '↻';
-  try {
-    await loadSheet();
-    showToast('✓ Datos sincronizados', 'success');
-  } catch(e) {
-    showToast('Error: ' + e.message, 'error');
-  } finally {
-    btn.classList.remove('syncing');
-  }
+  btn.textContent = '↻ Sincronizando...';
+  btn.disabled = true;
+  try { await loadSheet(); toast('Datos actualizados','ok'); }
+  catch(e) { toast('Error: '+e.message,'err'); }
+  finally { btn.textContent = '↻ Sincronizar'; btn.disabled = false; }
 }
 
-// ─── BUILD UI ───
+// ── BUILD UI ──
 function buildUI() {
-  const ferias = [...new Set(allData.map(r => r[COL.EVENTO]).filter(Boolean))].sort();
+  const ferias = [...new Set(allData.map(r=>r[COL.EVENTO]).filter(Boolean))].sort();
   const total = allData.length;
-  const enviados = allData.filter(r => r[COL.ESTADO_ENVIO] === 'ENVIADO').length;
-  const opened = allData.filter(r => r[COL.BREVO] === 'opened').length;
-  const clicks = allData.filter(r => r[COL.BREVO] === 'click').length;
-  const errors = allData.filter(r => r[COL.ESTADO_ENVIO] === 'Error').length;
+  const env = allData.filter(r=>r[COL.ESTADO_ENVIO]==='ENVIADO').length;
+  const op  = allData.filter(r=>r[COL.BREVO]==='opened').length;
+  const cl  = allData.filter(r=>r[COL.BREVO]==='click').length;
+  const er  = allData.filter(r=>r[COL.ESTADO_ENVIO]==='Error').length;
 
-  document.getElementById('kpiTotal').textContent = total.toLocaleString('es');
-  document.getElementById('kpiFerias').textContent = ferias.length + ' ferias activas';
-  document.getElementById('kpiEnviados').textContent = enviados.toLocaleString('es');
-  document.getElementById('kpiEnviadosPct').textContent = ((enviados/total)*100).toFixed(1) + '% del total';
-  document.getElementById('kpiOpened').textContent = opened.toLocaleString('es');
-  document.getElementById('kpiOpenedPct').textContent = ((opened/enviados)*100).toFixed(1) + '% open rate';
-  document.getElementById('kpiClicks').textContent = clicks.toLocaleString('es');
-  document.getElementById('kpiClicksPct').textContent = ((clicks/enviados)*100).toFixed(1) + '% click rate';
-  document.getElementById('kpiErrors').textContent = errors.toLocaleString('es');
+  document.getElementById('kTotal').textContent   = total.toLocaleString('es');
+  document.getElementById('kFeriasN').textContent = ferias.length+' ferias activas';
+  document.getElementById('kEnviados').textContent= env.toLocaleString('es');
+  document.getElementById('kEnvPct').textContent  = ((env/total)*100).toFixed(1)+'% del total';
+  document.getElementById('kOpened').textContent  = op.toLocaleString('es');
+  document.getElementById('kOpenPct').textContent = ((op/env)*100).toFixed(1)+'% open rate';
+  document.getElementById('kClicks').textContent  = cl.toLocaleString('es');
+  document.getElementById('kClickPct').textContent= ((cl/env)*100).toFixed(1)+'% click rate';
+  document.getElementById('kErrors').textContent  = er.toLocaleString('es');
   document.getElementById('navTotal').textContent = total;
-  document.getElementById('navOpened').textContent = opened;
+  document.getElementById('navOpened').textContent= op;
 
-  // Feria filter
   const sel = document.getElementById('feriaFilter');
-  sel.innerHTML = '<option value="">Todas las ferias</option>' +
-    ferias.map(f => `<option value="${f}">${f}</option>`).join('');
+  sel.innerHTML = '<option value="">Todas las ferias</option>'+ferias.map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join('');
 
-  // Nav ferias (top 5)
-  document.getElementById('navFerias').innerHTML = ferias.slice(0,5)
-    .map(f => `<div class="nav-item" onclick="quickFilterFeria('${f.replace(/'/g,"\\'")}')">● &nbsp;<span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f}</span></div>`).join('');
+  document.getElementById('navFerias').innerHTML = ferias.slice(0,6).map(f=>
+    `<div class="nav-feria" onclick="quickFeria('${f.replace(/'/g,"\\'")}')"><span class="dot"></span><span title="${esc(f)}">${esc(f)}</span></div>`
+  ).join('');
 
   filterTable();
 }
 
-function quickFilterFeria(feria) {
-  document.getElementById('feriaFilter').value = feria;
-  filterTable();
-}
+function quickFeria(f) { document.getElementById('feriaFilter').value=f; filterTable(); }
 
-// ─── FILTER ───
+// ── FILTER ──
 function filterTable() {
-  const search = document.getElementById('searchInput').value.toLowerCase();
-  const feria = document.getElementById('feriaFilter').value;
+  const s  = document.getElementById('searchInput').value.toLowerCase();
+  const fe = document.getElementById('feriaFilter').value;
+  const cr = document.getElementById('crmFilter').value;
 
-  filteredData = allData.filter(r => {
-    const ms = !search || [r[COL.EMPRESA], r[COL.CONTACTO], r[COL.EMAIL_DIR], r[COL.EVENTO]]
-      .some(v => (v||'').toLowerCase().includes(search));
-    const mf = !feria || r[COL.EVENTO] === feria;
-    const mc = currentFilter === 'all' ||
-      (currentFilter === 'opened' && r[COL.BREVO] === 'opened') ||
-      (currentFilter === 'click'  && r[COL.BREVO] === 'click') ||
-      (currentFilter === 'sent'   && r[COL.BREVO] === 'sent') ||
-      (currentFilter === 'error'  && r[COL.ESTADO_ENVIO] === 'Error');
-    return ms && mf && mc;
+  filtered = allData.filter(r => {
+    const ms = !s || [r[COL.EMPRESA],r[COL.CONTACTO],r[COL.EMAIL_DIR],r[COL.EVENTO],r[COL.PAIS]]
+      .some(v=>(v||'').toLowerCase().includes(s));
+    const mf = !fe || r[COL.EVENTO]===fe;
+    const mc = chipFilter==='all' ||
+      (chipFilter==='opened' && r[COL.BREVO]==='opened') ||
+      (chipFilter==='click'  && r[COL.BREVO]==='click') ||
+      (chipFilter==='sent'   && r[COL.BREVO]==='sent') ||
+      (chipFilter==='error'  && r[COL.ESTADO_ENVIO]==='Error');
+    const mcrm = !cr || (r[COL.CRM]||'')=== cr;
+    return ms && mf && mc && mcrm;
   });
-
-  currentPage = 1;
+  page = 1;
   renderTable();
 }
 
-function toggleChip(el, f) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active','active-green','active-blue'));
-  currentFilter = f;
-  if (f === 'opened') el.classList.add('active-green');
-  else if (f === 'click') el.classList.add('active-blue');
-  else el.classList.add('active');
+function setChip(el, f) {
+  document.querySelectorAll('.chip').forEach(c=>c.className='chip');
+  chipFilter = f;
+  const map = {all:'on',opened:'on-g',click:'on-b',sent:'on',error:'on-a'};
+  el.classList.add(map[f]||'on');
   filterTable();
 }
 
-// ─── RENDER TABLE ───
+// ── RENDER TABLE ──
 function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  const total = filteredData.length;
-  const totalPages = Math.ceil(total / PER_PAGE) || 1;
-  if (currentPage > totalPages) currentPage = totalPages;
-  const start = (currentPage - 1) * PER_PAGE;
-  const page = filteredData.slice(start, start + PER_PAGE);
+  const total = filtered.length;
+  const pages = Math.ceil(total/PER)||1;
+  if (page > pages) page = pages;
+  const s = (page-1)*PER;
+  const slice = filtered.slice(s, s+PER);
 
-  if (!page.length) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">🔍</div><p>No se encontraron expositores con esos filtros</p></div></td></tr>`;
+  document.getElementById('filterCount').textContent = total.toLocaleString('es')+' expositores';
+  document.getElementById('pageInfo').textContent = `Página ${page} de ${pages}`;
+
+  const tbody = document.getElementById('tbody');
+  if (!slice.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-ico">🔍</div><p>Sin resultados con los filtros actuales</p></div></td></tr>`;
   } else {
-    tbody.innerHTML = page.map((r, i) => {
-      const realIdx = allData.indexOf(r);
-      return `<tr onclick="openModal(${realIdx})" style="animation-delay:${i*15}ms">
-        <td><div class="company-name">${esc(r[COL.EMPRESA])}</div><div class="company-web">${r[COL.WEB]?'🌐 '+esc(r[COL.WEB]):'<span style="color:#ddd">Sin web</span>'}</div></td>
-        <td><div class="contact-name">${esc(r[COL.CONTACTO]||'—')}</div><div class="contact-email">${esc(r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]||'—')}</div></td>
-        <td><span class="feria-tag" title="${esc(r[COL.EVENTO])}">${esc(r[COL.EVENTO]||'—')}</span></td>
-        <td style="font-size:12px">${esc(r[COL.PAIS]||'—')}</td>
+    tbody.innerHTML = slice.map((r,i)=>{
+      const ri = allData.indexOf(r);
+      const em = r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]||'';
+      const tel = r[COL.TEL]||'';
+      return `<tr onclick="openModal(${ri})" style="animation-delay:${i*12}ms">
+        <td><div class="co-name">${esc(r[COL.EMPRESA])}</div><div class="co-web">${r[COL.WEB]?'🌐 '+esc(r[COL.WEB]):'<span style="color:#ccc;font-size:11px">Sin web</span>'}</div></td>
+        <td><div class="ct-name">${esc(r[COL.CONTACTO]||'—')}</div><div class="ct-email">${esc(em||'—')}</div></td>
+        <td><span class="feria-pill" title="${esc(r[COL.EVENTO])}">${esc(r[COL.EVENTO]||'—')}</span></td>
+        <td><span class="country">${esc(r[COL.PAIS]||'—')}</span></td>
         <td>${badgeEnvio(r[COL.ESTADO_ENVIO])}</td>
         <td>${badgeBrevo(r[COL.BREVO])}</td>
-        <td><select class="crm-select" onclick="event.stopPropagation()" onchange="quickSaveCRM(event,${realIdx})" data-idx="${realIdx}">
+        <td><select class="crm-sel" onclick="event.stopPropagation()" onchange="quickCRM(event,${ri})">
           <option value="">— Sin estado —</option>
-          ${crmOptions(r[COL.CRM_ESTADO]||'')}
+          ${crmOpts(r[COL.CRM]||'')}
         </select></td>
-        <td><div style="display:flex;gap:5px">
-          <button class="action-btn" title="Email" onclick="event.stopPropagation();mailTo(${realIdx})">✉</button>
-          <button class="action-btn" title="Detalle">👁</button>
-          ${r[COL.TEL]?`<button class="action-btn" title="Llamar" onclick="event.stopPropagation();window.location='tel:${r[COL.TEL]}'">📞</button>`:''}
+        <td><div class="row-actions">
+          ${em?`<button class="act-btn email" title="Enviar email" onclick="event.stopPropagation();window.location='mailto:${em}'">✉</button>`:''}
+          ${tel?`<button class="act-btn call" title="Llamar" onclick="event.stopPropagation();window.location='tel:${tel}'">📞</button>`:''}
+          <button class="act-btn view" title="Ver detalle">👁</button>
         </div></td>
       </tr>`;
     }).join('');
   }
 
-  document.getElementById('paginationInfo').textContent = `Página ${currentPage} de ${totalPages}`;
-  document.getElementById('rowCount').textContent = `${total.toLocaleString('es')} expositores`;
-
-  // Page buttons
-  const pb = document.getElementById('pageButtons');
+  // Pagination
+  const pb = document.getElementById('pageBtns');
   pb.innerHTML = '';
-  const btn = (n, label, cls='') => `<button class="page-btn ${cls}" onclick="goPage(${n})">${label}</button>`;
-  pb.innerHTML += btn(Math.max(1,currentPage-1),'‹');
-  const range = [];
-  for (let p=Math.max(1,currentPage-1); p<=Math.min(totalPages,currentPage+2); p++) range.push(p);
-  range.forEach(p => pb.innerHTML += btn(p, p, p===currentPage?'active':''));
-  if (range[range.length-1] < totalPages) pb.innerHTML += `<button class="page-btn" disabled>…</button>` + btn(totalPages, totalPages);
-  pb.innerHTML += btn(Math.min(totalPages,currentPage+1),'›');
+  const add = (n,label,cls='') => { const b=document.createElement('button'); b.className='page-btn '+cls; b.textContent=label; b.onclick=()=>goPage(n); pb.appendChild(b); };
+  add(Math.max(1,page-1),'‹'); 
+  let lo=Math.max(1,page-1), hi=Math.min(pages,page+2);
+  for(let p=lo;p<=hi;p++) add(p,p,p===page?'active':'');
+  if(hi<pages){const e=document.createElement('button');e.className='page-btn';e.textContent='…';e.disabled=true;pb.appendChild(e);add(pages,pages);}
+  add(Math.min(pages,page+1),'›');
 }
 
-function goPage(p) { currentPage = p; renderTable(); }
+function goPage(p) { page=p; renderTable(); }
 
-// ─── CRM SAVE ───
-async function quickSaveCRM(event, realIdx) {
-  const sel = event.target;
-  const value = sel.value;
+async function quickCRM(e, ri) {
+  const sel = e.target;
   sel.classList.add('saving');
-  try {
-    await saveCRMState(realIdx, value);
-    showToast('✓ Estado guardado en Sheet', 'success');
-  } catch(e) {
-    showToast('Error guardando: ' + e.message, 'error');
-  } finally {
-    setTimeout(() => sel.classList.remove('saving'), 1500);
-  }
+  try { await saveCRM(ri, sel.value); toast('✓ Estado guardado','ok'); }
+  catch(err) { toast('Error guardando','err'); }
+  finally { setTimeout(()=>sel.classList.remove('saving'),1500); }
 }
 
-async function saveModalCRM() {
-  if (modalRowIdx < 0) return;
-  const value = document.getElementById('modalCRMSelect').value;
+// ── MODAL ──
+function openModal(ri) {
+  modalIdx = ri;
+  const r = allData[ri];
+  document.getElementById('mName').textContent    = r[COL.EMPRESA]||'—';
+  document.getElementById('mId').textContent      = r[COL.ID]||'—';
+  document.getElementById('mFeria').textContent   = r[COL.EVENTO]||'—';
+  document.getElementById('mRecinto').textContent = r[COL.RECINTO]||'—';
+  const w = r[COL.WEB];
+  document.getElementById('mWeb').textContent = w||'Sin web';
+  document.getElementById('mWeb').href = w?'https://'+w:'#';
+  document.getElementById('mPais').textContent    = r[COL.PAIS]||'—';
+  document.getElementById('mContacto').textContent= r[COL.CONTACTO]||'—';
+  document.getElementById('mCargo').textContent   = r[COL.CARGO]||'—';
+  const em = r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]||'';
+  document.getElementById('mEmail').textContent = em||'Sin email';
+  document.getElementById('mEmail').href = em?'mailto:'+em:'#';
+  document.getElementById('mTel').textContent = r[COL.TEL]||'—';
+  document.getElementById('mCrmSel').value = r[COL.CRM]||'';
+
+  // Email button
+  const eBtn = document.getElementById('mBtnEmail');
+  eBtn.style.display = em ? '' : 'none';
+
+  // Call button
+  const cBtn = document.getElementById('mBtnCall');
+  const tel = r[COL.TEL]||'';
+  cBtn.style.display = tel ? '' : 'none';
+
+  // Pipeline
+  const brevo = r[COL.BREVO]||'';
+  const crm = r[COL.CRM]||'';
+  let step = 0;
+  if (r[COL.ESTADO_ENVIO]==='ENVIADO') step=1;
+  if (brevo==='opened') step=2;
+  if (brevo==='click') step=3;
+  if (crm.includes('Negociando')) step=4;
+  if (crm.includes('Cerrado')) step=5;
+
+  const steps = ['Email','Abierto','Click','Contacto','Negoc.','Cerrado'];
+  let pip = '';
+  steps.forEach((s,i) => {
+    if (i>0) pip += `<div class="pip-line ${i<=step?'done':''}"></div>`;
+    const cls = i<step?'done':i===step?'active':'';
+    pip += `<div class="pip-step"><div class="pip-dot ${cls}">${i+1}</div><div class="pip-label">${s}</div></div>`;
+  });
+  document.getElementById('mPipeline').innerHTML = pip;
+
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+function doEmail() {
+  const em = allData[modalIdx]?.[COL.EMAIL_DIR]||allData[modalIdx]?.[COL.EMAIL_GEN]||'';
+  if (em) window.location = 'mailto:'+em;
+}
+
+function doCall() {
+  const tel = allData[modalIdx]?.[COL.TEL]||'';
+  if (tel) window.location = 'tel:'+tel;
+}
+
+async function saveModal() {
+  if (modalIdx<0) return;
+  const val = document.getElementById('mCrmSel').value;
   try {
-    await saveCRMState(modalRowIdx, value);
-    showToast('✓ Guardado en Google Sheet', 'success');
+    await saveCRM(modalIdx, val);
+    toast('✓ Guardado en Sheet','ok');
     renderTable();
     closeModal();
-  } catch(e) {
-    showToast('Error: ' + e.message, 'error');
-  }
+  } catch(e) { toast('Error: '+e.message,'err'); }
 }
 
-// ─── MODAL ───
-function openModal(idx) {
-  modalRowIdx = idx;
-  const r = allData[idx];
-  document.getElementById('modalCompany').textContent = r[COL.EMPRESA] || '—';
-  document.getElementById('modalId').textContent = r[COL.ID] || '—';
-  document.getElementById('mFeria').textContent = r[COL.EVENTO] || '—';
-  document.getElementById('mRecinto').textContent = r[COL.RECINTO] || '—';
-  const w = r[COL.WEB]; document.getElementById('mWeb').textContent = w||'—'; document.getElementById('mWeb').href = w?'https://'+w:'#';
-  document.getElementById('mPais').textContent = r[COL.PAIS] || '—';
-  document.getElementById('mNombre').textContent = r[COL.CONTACTO] || '—';
-  document.getElementById('mCargo').textContent = r[COL.CARGO] || '—';
-  const em = r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]||''; document.getElementById('mEmail').textContent = em||'—'; document.getElementById('mEmail').href = 'mailto:'+em;
-  document.getElementById('mTel').textContent = r[COL.TEL] || '—';
-  document.getElementById('modalCRMSelect').value = r[COL.CRM_ESTADO] || '';
-  document.getElementById('modalEmailBtn').onclick = () => mailTo(idx);
-  document.getElementById('modalOverlay').classList.add('open');
-}
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-function mailTo(idx) { const r=allData[idx]; const em=r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]; if(em) window.location='mailto:'+em; }
-
-// ─── EXPORT ───
+// ── EXPORT ──
 function exportCSV() {
-  const headers = ['ID','Evento','Empresa','Contacto','Email','País','Estado Envío','Brevo','Estado CRM'];
-  const rows = filteredData.map(r => [
-    r[COL.ID],r[COL.EVENTO],r[COL.EMPRESA],r[COL.CONTACTO],
-    r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN],r[COL.PAIS],
-    r[COL.ESTADO_ENVIO],r[COL.BREVO],r[COL.CRM_ESTADO]||''
-  ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
-  const csv = [headers.join(','), ...rows].join('\n');
+  const h = ['ID','Evento','Empresa','Contacto','Email','País','Envío','Brevo','CRM'];
+  const rows = filtered.map(r=>[r[COL.ID],r[COL.EVENTO],r[COL.EMPRESA],r[COL.CONTACTO],
+    r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN],r[COL.PAIS],r[COL.ESTADO_ENVIO],r[COL.BREVO],r[COL.CRM]||'']
+    .map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [h.join(','),...rows].join('\n');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
-  a.download = 'resa_crm_export.csv';
-  a.click();
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = 'resa_expositores.csv'; a.click();
 }
 
-// ─── LOGOUT ───
+// ── LOGOUT ──
 function logout() {
-  accessToken = null; allData = []; filteredData = [];
-  document.getElementById('appScreen').style.display = 'none';
-  document.getElementById('authScreen').style.display = 'flex';
+  token=null; allData=[]; filtered=[];
+  document.getElementById('appScreen').style.display='none';
+  document.getElementById('authScreen').style.display='flex';
 }
 
-// ─── HELPERS ───
+function openSettings() {
+  logout(); // reopen auth to change settings
+}
+
+// ── HELPERS ──
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function badgeBrevo(b) {
-  if (!b) return '<span class="badge badge-sent" style="opacity:.4">—</span>';
+  if (!b) return '<span class="badge badge-sent" style="opacity:.35">—</span>';
   if (b==='opened') return '<span class="badge badge-opened">Abierto</span>';
   if (b==='click')  return '<span class="badge badge-click">Click</span>';
   if (b==='sent')   return '<span class="badge badge-sent">Enviado</span>';
-  if (b==='ENVIADO') return '<span class="badge badge-enviado">Brevo OK</span>';
+  if (b==='ENVIADO') return '<span class="badge badge-enviado">Brevo</span>';
   return `<span class="badge badge-sent">${esc(b)}</span>`;
 }
 function badgeEnvio(e) {
-  if (e==='Error')       return '<span class="badge badge-error">Error</span>';
-  if (e==='ENVIADO')     return '<span class="badge badge-enviado">Enviado</span>';
+  if (e==='Error')        return '<span class="badge badge-error">Error</span>';
+  if (e==='ENVIADO')      return '<span class="badge badge-enviado">Enviado</span>';
   if (e==='FORZAR ENVIO') return '<span class="badge badge-sent">Forzado</span>';
   return `<span class="badge badge-sent">${esc(e||'—')}</span>`;
 }
 
-function crmOptions(current) {
-  const opts = ['🔵 Nuevo','📧 Contactado','👁 Ha abierto','📞 Llamar','💬 Negociando','✅ Cerrado','❌ Descartado'];
-  return opts.map(o => `<option value="${o}"${current===o?' selected':''}>${o}</option>`).join('');
+function crmOpts(cur) {
+  return ['🔵 Nuevo','📧 Contactado','👁 Ha abierto','📞 Llamar','💬 Negociando','✅ Cerrado','❌ Descartado']
+    .map(o=>`<option value="${o}"${cur===o?' selected':''}>${o}</option>`).join('');
 }
 
-let toastTimer;
-function showToast(msg, type='') {
+let toastT;
+function toast(msg, type='') {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+  const inner = document.getElementById('toastInner');
+  inner.textContent = msg;
+  inner.className = 'toast-inner'+(type?' '+type:'');
+  t.className = 'toast show';
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.className='toast',3000);
 }
 </script>
 </body>
