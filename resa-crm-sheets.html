@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESA · CRM Expositores</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --red: #C8102E;
+    --red-dark: #9e0c23;
+    --red-light: #f9e8eb;
+    --black: #111111;
+    --gray-900: #1a1a1a;
+    --gray-700: #3d3d3d;
+    --gray-400: #888;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --opened: #0a7c59;
+    --opened-bg: #e6f5f0;
+    --click: #1a56a0;
+    --click-bg: #e8f0fb;
+    --sent: #5a5a5a;
+    --sent-bg: #efefef;
+    --error: #b84d00;
+    --error-bg: #fdf0e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--black); min-height: 100vh; }
+
+  /* ── AUTH SCREEN ── */
+  #authScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--black);
+  }
+  .auth-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 20px;
+    padding: 48px 52px;
+    width: 420px;
+    text-align: center;
+  }
+  .auth-logo { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--red); letter-spacing: 4px; line-height: 1; }
+  .auth-sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #555; margin-top: 6px; margin-bottom: 40px; }
+  .auth-title { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 8px; }
+  .auth-desc { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 32px; }
+  .auth-divider { border: none; border-top: 1px solid #2a2a2a; margin: 24px 0; }
+  .auth-steps { text-align: left; margin-bottom: 32px; }
+  .auth-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 12px; color: #888; line-height: 1.5; }
+  .step-text strong { color: #ccc; }
+  .config-section { background: #111; border: 1px solid #2a2a2a; border-radius: 12px; padding: 18px; margin-bottom: 24px; text-align: left; }
+  .config-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 6px; }
+  .config-input {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #ccc;
+    outline: none;
+    margin-bottom: 12px;
+  }
+  .config-input:focus { border-color: var(--red); }
+  .config-input:last-child { margin-bottom: 0; }
+  .btn-google {
+    width: 100%;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.15s;
+  }
+  .btn-google:hover { background: var(--red-dark); }
+  .btn-google:disabled { background: #333; color: #555; cursor: not-allowed; }
+  .auth-note { font-size: 11px; color: #444; margin-top: 16px; line-height: 1.5; }
+
+  /* ── SETUP SCREEN ── */
+  #setupScreen { display: none; min-height: 100vh; align-items: center; justify-content: center; background: var(--black); }
+  .setup-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 40px 48px; width: 480px; }
+  .setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 2px; margin-bottom: 4px; }
+  .setup-sub { font-size: 12px; color: #666; margin-bottom: 28px; }
+  .setup-field { margin-bottom: 16px; }
+  .setup-field label { display: block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 6px; }
+  .setup-field input, .setup-field select {
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #ccc;
+    outline: none;
+  }
+  .setup-field input:focus, .setup-field select:focus { border-color: var(--red); }
+  .setup-field .hint { font-size: 11px; color: #444; margin-top: 4px; }
+  .btn-setup {
+    width: 100%;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+  }
+  .btn-setup:hover { background: var(--red-dark); }
+
+  /* ── LOADING ── */
+  #loadingScreen { display: none; min-height: 100vh; align-items: center; justify-content: center; background: var(--black); flex-direction: column; gap: 16px; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #333; border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── APP ── */
+  #appScreen { display: none; }
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar { width: 220px; background: var(--black); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
+  .logo-area { padding: 28px 20px 24px; border-bottom: 1px solid #2a2a2a; }
+  .logo-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 2px; line-height: 1; }
+  .logo-sub { font-size: 10px; color: var(--gray-400); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-top: 1px solid #2a2a2a; }
+  .user-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; overflow: hidden; }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { font-size: 12px; color: #aaa; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .logout-btn { font-size: 11px; color: #555; cursor: pointer; background: none; border: none; }
+  .logout-btn:hover { color: var(--red); }
+  .nav { padding: 16px 0; flex: 1; overflow-y: auto; }
+  .nav-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #555; padding: 8px 20px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: #aaa; font-size: 13px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+  .nav-item:hover { color: var(--white); background: #1f1f1f; }
+  .nav-item.active { color: var(--white); border-left-color: var(--red); background: #1f1f1f; }
+  .nav-badge { margin-left: auto; background: var(--red); color: white; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+
+  .main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; }
+  .topbar { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1.5px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .search-box { display: flex; align-items: center; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 7px 12px; gap: 8px; width: 260px; }
+  .search-box input { border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--black); outline: none; width: 100%; }
+  .search-box input::placeholder { color: var(--gray-400); }
+  .btn-primary { background: var(--red); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--red-dark); }
+  .btn-ghost { background: transparent; border: 1px solid var(--gray-200); border-radius: 7px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--gray-700); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+  .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+
+  .content { padding: 24px 28px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+  .kpi-card { background: var(--white); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--gray-200); position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red); }
+  .kpi-card.green::before { background: var(--opened); }
+  .kpi-card.blue::before { background: var(--click); }
+  .kpi-card.orange::before { background: var(--error); }
+  .kpi-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 6px; }
+  .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+  .filters-bar { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .filter-select { border: 1px solid var(--gray-200); border-radius: 8px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--black); background: var(--gray-100); cursor: pointer; outline: none; }
+  .filter-select:focus { border-color: var(--red); }
+  .filter-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-700); transition: all 0.15s; }
+  .filter-chip:hover, .filter-chip.active { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .filter-chip.active-green { border-color: var(--opened); color: var(--opened); background: var(--opened-bg); }
+  .filter-chip.active-blue { border-color: var(--click); color: var(--click); background: var(--click-bg); }
+  .filter-count { margin-left: auto; font-size: 12px; color: var(--gray-400); }
+  .sync-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--gray-700); cursor: pointer; transition: all 0.15s; }
+  .sync-btn:hover { border-color: var(--red); color: var(--red); }
+  .sync-btn.syncing .sync-icon { animation: spin 1s linear infinite; display: inline-block; }
+
+  .table-wrap { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; }
+  .table-header { padding: 14px 18px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+  .table-title { font-size: 13px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 10px 14px; text-align: left; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); font-weight: 600; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+  thead th:first-child { padding-left: 18px; }
+  tbody tr { border-bottom: 1px solid var(--gray-200); transition: background 0.1s; cursor: pointer; animation: fadeIn 0.3s ease both; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+  tbody td { padding: 12px 14px; font-size: 13px; color: var(--gray-700); vertical-align: middle; }
+  tbody td:first-child { padding-left: 18px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .company-name { font-weight: 600; color: var(--black); font-size: 13px; }
+  .company-web { font-size: 11px; color: var(--gray-400); }
+  .contact-name { font-weight: 500; color: var(--black); font-size: 13px; }
+  .contact-email { font-size: 11px; color: var(--gray-400); }
+  .feria-tag { background: var(--red-light); color: var(--red-dark); padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; max-width: 130px; display: inline-block; overflow: hidden; text-overflow: ellipsis; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+  .badge-opened { background: var(--opened-bg); color: var(--opened); } .badge-opened::before { background: var(--opened); }
+  .badge-click { background: var(--click-bg); color: var(--click); } .badge-click::before { background: var(--click); }
+  .badge-sent { background: var(--sent-bg); color: var(--sent); } .badge-sent::before { background: var(--sent); }
+  .badge-error { background: var(--error-bg); color: var(--error); } .badge-error::before { background: var(--error); }
+  .badge-enviado { background: #eef2ff; color: #3730a3; } .badge-enviado::before { background: #3730a3; }
+
+  .crm-select { border: 1px solid var(--gray-200); border-radius: 6px; padding: 4px 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; background: var(--gray-100); cursor: pointer; outline: none; color: var(--black); transition: border-color 0.15s; }
+  .crm-select:focus { border-color: var(--red); }
+  .crm-select.saving { border-color: var(--opened); background: var(--opened-bg); }
+
+  .action-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--gray-200); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.15s; color: var(--gray-400); }
+  .action-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-top: 1px solid var(--gray-200); font-size: 12px; color: var(--gray-400); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--gray-200); background: var(--white); cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--gray-700); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .page-btn:hover, .page-btn.active { background: var(--red); color: white; border-color: var(--red); }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: white; padding: 12px 20px; border-radius: 10px; font-size: 13px; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px; border-left: 3px solid var(--red); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left-color: var(--opened); }
+  .toast.error { border-left-color: var(--error); }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--white); border-radius: 16px; width: 540px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideUp 0.2s ease; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: flex-start; justify-content: space-between; }
+  .modal-company { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
+  .modal-id { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .modal-close { background: var(--gray-100); border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 16px; color: var(--gray-700); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--red-light); color: var(--red); }
+  .modal-body { padding: 20px 24px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); font-weight: 600; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--gray-200); }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-field label { font-size: 11px; color: var(--gray-400); font-weight: 500; display: block; margin-bottom: 3px; }
+  .modal-field p { font-size: 13px; color: var(--black); font-weight: 500; }
+  .modal-field a { font-size: 13px; color: var(--red); text-decoration: none; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; justify-content: flex-end; }
+
+  .empty-state { text-align: center; padding: 48px; color: var(--gray-400); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  #errorBanner { display: none; background: var(--error-bg); border: 1px solid #f5c2a0; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: var(--error); }
+</style>
+</head>
+<body>
+
+<!-- ═══ AUTH SCREEN ═══ -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">RESA</div>
+    <div class="auth-sub">CRM Expositores</div>
+    <div class="auth-title">Conectar con Google Sheets</div>
+    <div class="auth-desc">Introduce los datos de tu proyecto Google Cloud para conectar el CRM a tu Spreadsheet directamente.</div>
+
+    <div class="config-section">
+      <div class="config-label">Client ID de Google OAuth 2.0</div>
+      <input class="config-input" id="clientIdInput" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com">
+      <div class="config-label">ID del Google Sheet</div>
+      <input class="config-input" id="sheetIdInput" type="text" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+      <div class="config-label">Nombre de la hoja (pestaña)</div>
+      <input class="config-input" id="sheetNameInput" type="text" placeholder="CONTACTO EXPOSITORES" value="CONTACTO EXPOSITORES">
+    </div>
+
+    <button class="btn-google" id="authBtn" onclick="startAuth()" disabled>
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#fff" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/><path fill="#fff" d="M17.64 9.2c0-.74-.06-1.28-.19-1.84H9v3.34h4.96c-.1.83-.64 2.08-1.84 2.92l2.84 2.2c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#fff" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A9.008 9.008 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/><path fill="#fff" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.76.53-1.78.9-3.12.9-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.45 15.98 5.48 18 9 18z"/></svg>
+      Conectar con Google
+    </button>
+    <p class="auth-note">Los datos permanecen en tu Google Workspace. Esta app nunca almacena credenciales.</p>
+
+    <hr class="auth-divider">
+    <div class="auth-steps">
+      <div class="auth-step"><div class="step-num">1</div><div class="step-text">Ve a <strong>console.cloud.google.com</strong> → APIs → Credenciales → Crear ID de cliente OAuth</div></div>
+      <div class="auth-step"><div class="step-num">2</div><div class="step-text">Tipo: <strong>Aplicación web</strong>. Añade tu dominio en "Orígenes JS autorizados"</div></div>
+      <div class="auth-step"><div class="step-num">3</div><div class="step-text">Activa la <strong>Google Sheets API</strong> en tu proyecto</div></div>
+      <div class="auth-step"><div class="step-num">4</div><div class="step-text">Pega el Client ID arriba y el ID del Sheet (está en la URL del Sheet)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div id="loadingScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;background:var(--black);flex-direction:column;gap:16px;">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Cargando datos...</div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="appScreen" style="display:none;">
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-title">RESA</div>
+      <div class="logo-sub">CRM Expositores</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Principal</div>
+      <div class="nav-item active">◈ &nbsp;Dashboard</div>
+      <div class="nav-item">⊞ &nbsp;Expositores <span class="nav-badge" id="navTotal">—</span></div>
+      <div class="nav-item">◉ &nbsp;Pipeline <span class="nav-badge" style="background:var(--opened)" id="navOpened">—</span></div>
+      <div class="nav-label">Ferias</div>
+      <div id="navFerias"></div>
+      <div class="nav-label">Gestión</div>
+      <div class="nav-item">⚡ &nbsp;Campañas</div>
+      <div class="nav-item" onclick="logout()">⎋ &nbsp;Cerrar sesión</div>
+    </nav>
+    <div class="user-chip">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div class="user-name" id="userName">—</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title">CRM · Expositores</div>
+      <div class="topbar-right">
+        <button class="sync-btn" id="syncBtn" onclick="syncData()">
+          <span class="sync-icon">↻</span> Sincronizar
+        </button>
+        <div class="search-box">
+          <span style="color:#aaa;font-size:14px">🔍</span>
+          <input type="text" id="searchInput" placeholder="Buscar empresa, contacto, feria..." oninput="filterTable()">
+        </div>
+        <button class="btn-primary" onclick="window.open('https://docs.google.com/spreadsheets/d/'+CONFIG.sheetId,'_blank')">↗ Abrir Sheet</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div id="errorBanner"></div>
+
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Total</div><div class="kpi-value" id="kpiTotal">—</div><div class="kpi-sub" id="kpiFerias">— ferias</div></div>
+        <div class="kpi-card"><div class="kpi-label">Enviados</div><div class="kpi-value" id="kpiEnviados">—</div><div class="kpi-sub" id="kpiEnviadosPct">—</div></div>
+        <div class="kpi-card green"><div class="kpi-label">Abiertos</div><div class="kpi-value" style="color:var(--opened)" id="kpiOpened">—</div><div class="kpi-sub" id="kpiOpenedPct">—</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Clicks</div><div class="kpi-value" style="color:var(--click)" id="kpiClicks">—</div><div class="kpi-sub" id="kpiClicksPct">—</div></div>
+        <div class="kpi-card orange"><div class="kpi-label">Errores</div><div class="kpi-value" style="color:var(--error)" id="kpiErrors">—</div><div class="kpi-sub">Revisar emails</div></div>
+      </div>
+
+      <div class="filters-bar">
+        <span class="filter-label">Feria:</span>
+        <select class="filter-select" id="feriaFilter" onchange="filterTable()"><option value="">Todas</option></select>
+        <span class="filter-label" style="margin-left:8px">Estado:</span>
+        <span class="filter-chip active" onclick="toggleChip(this,'all')">Todos</span>
+        <span class="filter-chip" onclick="toggleChip(this,'opened')">🟢 Abiertos</span>
+        <span class="filter-chip" onclick="toggleChip(this,'click')">🔵 Clicks</span>
+        <span class="filter-chip" onclick="toggleChip(this,'sent')">⚪ Enviados</span>
+        <span class="filter-chip" onclick="toggleChip(this,'error')">🔴 Errores</span>
+        <span class="filter-count" id="rowCount"></span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">Listado de Expositores</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-ghost" onclick="exportCSV()">↓ Exportar CSV</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Contacto</th>
+              <th>Feria</th>
+              <th>País</th>
+              <th>Envío</th>
+              <th>Engagement</th>
+              <th>Estado CRM</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="pagination">
+          <span id="paginationInfo"></span>
+          <div class="page-btns" id="pageButtons"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-company" id="modalCompany"></div><div class="modal-id" id="modalId"></div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">Empresa</div>
+        <div class="modal-grid">
+          <div class="modal-field"><label>Feria</label><p id="mFeria"></p></div>
+          <div class="modal-field"><label>Recinto</label><p id="mRecinto"></p></div>
+          <div class="modal-field"><label>Web</label><a id="mWeb" href="#" target="_blank"></a></div>
+          <div class="modal-field"><label>País</label><p id="mPais"></p></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Contacto</div>
+        <div class="modal-grid">
+          <div class="modal-field"><label>Nombre</label><p id="mNombre"></p></div>
+          <div class="modal-field"><label>Cargo</label><p id="mCargo"></p></div>
+          <div class="modal-field"><label>Email</label><a id="mEmail" href="#"></a></div>
+          <div class="modal-field"><label>Teléfono</label><p id="mTel"></p></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Estado CRM</div>
+        <select class="filter-select" id="modalCRMSelect" style="width:100%">
+          <option value="">— Sin estado —</option>
+          <option value="🔵 Nuevo">🔵 Nuevo contacto</option>
+          <option value="📧 Contactado">📧 Email enviado</option>
+          <option value="👁 Ha abierto">👁 Ha abierto el email</option>
+          <option value="📞 Llamar">📞 Pendiente llamada</option>
+          <option value="💬 Negociando">💬 En negociación</option>
+          <option value="✅ Cerrado">✅ Cliente cerrado</option>
+          <option value="❌ Descartado">❌ Descartado</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="modalEmailBtn">✉ Email</button>
+      <button class="btn-primary" onclick="saveModalCRM()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───
+const CONFIG = { clientId: '', sheetId: '', sheetName: 'CONTACTO EXPOSITORES' };
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+let accessToken = null;
+let allData = [];
+let filteredData = [];
+let currentFilter = 'all';
+let currentPage = 1;
+const PER_PAGE = 20;
+let modalRowIdx = -1;
+let crmStateCol = -1; // índice de columna para Estado CRM
+
+// ─── COLUMN MAP (0-indexed) ───
+const COL = {
+  ID: 0, EVENTO: 1, RECINTO: 2, EMPRESA: 3, WEB: 4,
+  EMAIL_GEN: 5, CONTACTO: 6, EMAIL_DIR: 7, TEL: 8,
+  CARGO: 9, PAIS: 10, PLANTILLA: 11, DIA: 12, HORA: 13,
+  FORZAR: 14, ESTADO_ENVIO: 15, BREVO: 16, ID_MENSAJE: 17,
+  CRM_ESTADO: 18  // columna S — la añadimos si no existe
+};
+
+// ─── INIT ───
+document.getElementById('clientIdInput').addEventListener('input', checkAuthReady);
+document.getElementById('sheetIdInput').addEventListener('input', checkAuthReady);
+function checkAuthReady() {
+  const ok = document.getElementById('clientIdInput').value.trim() &&
+             document.getElementById('sheetIdInput').value.trim();
+  document.getElementById('authBtn').disabled = !ok;
+}
+
+function startAuth() {
+  CONFIG.clientId = document.getElementById('clientIdInput').value.trim();
+  CONFIG.sheetId  = document.getElementById('sheetIdInput').value.trim();
+  CONFIG.sheetName = document.getElementById('sheetNameInput').value.trim() || 'CONTACTO EXPOSITORES';
+
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.clientId,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) { showToast('Error de autenticación: ' + resp.error, 'error'); return; }
+      accessToken = resp.access_token;
+      await getUserInfo();
+      showLoading('Cargando expositores...');
+      await loadSheet();
+    }
+  });
+  client.requestAccessToken();
+}
+
+async function getUserInfo() {
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + accessToken }
+    });
+    const u = await r.json();
+    document.getElementById('userName').textContent = u.name || u.email;
+    if (u.picture) document.getElementById('userAvatar').innerHTML = `<img src="${u.picture}">`;
+    else document.getElementById('userAvatar').textContent = (u.name||'U')[0].toUpperCase();
+  } catch(e) {}
+}
+
+function showLoading(msg) {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'flex';
+  document.getElementById('loadingText').textContent = msg;
+  document.getElementById('appScreen').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+}
+
+// ─── LOAD SHEET ───
+async function loadSheet() {
+  try {
+    const range = encodeURIComponent(`${CONFIG.sheetName}!A1:S2000`);
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}`;
+    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+    if (!r.ok) throw new Error(`HTTP ${r.status}: ${await r.text()}`);
+    const data = await r.json();
+    const rows = data.values || [];
+    if (rows.length < 2) throw new Error('El Sheet está vacío o no se encontró la hoja.');
+
+    // Check if CRM Estado column exists (col S = index 18)
+    const header = rows[0];
+    if (header.length <= 18 || header[18] !== 'Estado CRM') {
+      await addCRMColumn(header.length);
+    }
+
+    allData = rows.slice(1).filter(r => r[COL.EMPRESA]);
+    buildUI();
+    showApp();
+  } catch(e) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('authScreen').style.display = 'flex';
+    showToast('Error cargando Sheet: ' + e.message, 'error');
+  }
+}
+
+async function addCRMColumn(existingCols) {
+  // Add header "Estado CRM" in column S (index 18)
+  const colLetter = colToLetter(19); // 1-indexed → S
+  const range = encodeURIComponent(`${CONFIG.sheetName}!${colLetter}1`);
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}?valueInputOption=USER_ENTERED`, {
+    method: 'PUT',
+    headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [['Estado CRM']] })
+  });
+}
+
+function colToLetter(col) {
+  let s = '';
+  while (col > 0) { col--; s = String.fromCharCode(65 + col % 26) + s; col = Math.floor(col / 26); }
+  return s;
+}
+
+// ─── SAVE CRM STATE ───
+async function saveCRMState(rowIdx, value) {
+  // rowIdx is 0-based in allData → sheet row = rowIdx + 2 (1 header + 1-based)
+  const sheetRow = allData.indexOf(allData[rowIdx]) + 2;
+  const range = encodeURIComponent(`${CONFIG.sheetName}!S${sheetRow}`);
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetId}/values/${range}?valueInputOption=USER_ENTERED`;
+  const r = await fetch(url, {
+    method: 'PUT',
+    headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ values: [[value]] })
+  });
+  if (!r.ok) throw new Error('Error guardando: ' + r.status);
+  allData[rowIdx][COL.CRM_ESTADO] = value;
+}
+
+// ─── SYNC ───
+async function syncData() {
+  const btn = document.getElementById('syncBtn');
+  btn.classList.add('syncing');
+  btn.querySelector('.sync-icon').textContent = '↻';
+  try {
+    await loadSheet();
+    showToast('✓ Datos sincronizados', 'success');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  } finally {
+    btn.classList.remove('syncing');
+  }
+}
+
+// ─── BUILD UI ───
+function buildUI() {
+  const ferias = [...new Set(allData.map(r => r[COL.EVENTO]).filter(Boolean))].sort();
+  const total = allData.length;
+  const enviados = allData.filter(r => r[COL.ESTADO_ENVIO] === 'ENVIADO').length;
+  const opened = allData.filter(r => r[COL.BREVO] === 'opened').length;
+  const clicks = allData.filter(r => r[COL.BREVO] === 'click').length;
+  const errors = allData.filter(r => r[COL.ESTADO_ENVIO] === 'Error').length;
+
+  document.getElementById('kpiTotal').textContent = total.toLocaleString('es');
+  document.getElementById('kpiFerias').textContent = ferias.length + ' ferias activas';
+  document.getElementById('kpiEnviados').textContent = enviados.toLocaleString('es');
+  document.getElementById('kpiEnviadosPct').textContent = ((enviados/total)*100).toFixed(1) + '% del total';
+  document.getElementById('kpiOpened').textContent = opened.toLocaleString('es');
+  document.getElementById('kpiOpenedPct').textContent = ((opened/enviados)*100).toFixed(1) + '% open rate';
+  document.getElementById('kpiClicks').textContent = clicks.toLocaleString('es');
+  document.getElementById('kpiClicksPct').textContent = ((clicks/enviados)*100).toFixed(1) + '% click rate';
+  document.getElementById('kpiErrors').textContent = errors.toLocaleString('es');
+  document.getElementById('navTotal').textContent = total;
+  document.getElementById('navOpened').textContent = opened;
+
+  // Feria filter
+  const sel = document.getElementById('feriaFilter');
+  sel.innerHTML = '<option value="">Todas las ferias</option>' +
+    ferias.map(f => `<option value="${f}">${f}</option>`).join('');
+
+  // Nav ferias (top 5)
+  document.getElementById('navFerias').innerHTML = ferias.slice(0,5)
+    .map(f => `<div class="nav-item" onclick="quickFilterFeria('${f.replace(/'/g,"\\'")}')">● &nbsp;<span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f}</span></div>`).join('');
+
+  filterTable();
+}
+
+function quickFilterFeria(feria) {
+  document.getElementById('feriaFilter').value = feria;
+  filterTable();
+}
+
+// ─── FILTER ───
+function filterTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const feria = document.getElementById('feriaFilter').value;
+
+  filteredData = allData.filter(r => {
+    const ms = !search || [r[COL.EMPRESA], r[COL.CONTACTO], r[COL.EMAIL_DIR], r[COL.EVENTO]]
+      .some(v => (v||'').toLowerCase().includes(search));
+    const mf = !feria || r[COL.EVENTO] === feria;
+    const mc = currentFilter === 'all' ||
+      (currentFilter === 'opened' && r[COL.BREVO] === 'opened') ||
+      (currentFilter === 'click'  && r[COL.BREVO] === 'click') ||
+      (currentFilter === 'sent'   && r[COL.BREVO] === 'sent') ||
+      (currentFilter === 'error'  && r[COL.ESTADO_ENVIO] === 'Error');
+    return ms && mf && mc;
+  });
+
+  currentPage = 1;
+  renderTable();
+}
+
+function toggleChip(el, f) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active','active-green','active-blue'));
+  currentFilter = f;
+  if (f === 'opened') el.classList.add('active-green');
+  else if (f === 'click') el.classList.add('active-blue');
+  else el.classList.add('active');
+  filterTable();
+}
+
+// ─── RENDER TABLE ───
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const total = filteredData.length;
+  const totalPages = Math.ceil(total / PER_PAGE) || 1;
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PER_PAGE;
+  const page = filteredData.slice(start, start + PER_PAGE);
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">🔍</div><p>No se encontraron expositores con esos filtros</p></div></td></tr>`;
+  } else {
+    tbody.innerHTML = page.map((r, i) => {
+      const realIdx = allData.indexOf(r);
+      return `<tr onclick="openModal(${realIdx})" style="animation-delay:${i*15}ms">
+        <td><div class="company-name">${esc(r[COL.EMPRESA])}</div><div class="company-web">${r[COL.WEB]?'🌐 '+esc(r[COL.WEB]):'<span style="color:#ddd">Sin web</span>'}</div></td>
+        <td><div class="contact-name">${esc(r[COL.CONTACTO]||'—')}</div><div class="contact-email">${esc(r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]||'—')}</div></td>
+        <td><span class="feria-tag" title="${esc(r[COL.EVENTO])}">${esc(r[COL.EVENTO]||'—')}</span></td>
+        <td style="font-size:12px">${esc(r[COL.PAIS]||'—')}</td>
+        <td>${badgeEnvio(r[COL.ESTADO_ENVIO])}</td>
+        <td>${badgeBrevo(r[COL.BREVO])}</td>
+        <td><select class="crm-select" onclick="event.stopPropagation()" onchange="quickSaveCRM(event,${realIdx})" data-idx="${realIdx}">
+          <option value="">— Sin estado —</option>
+          ${crmOptions(r[COL.CRM_ESTADO]||'')}
+        </select></td>
+        <td><div style="display:flex;gap:5px">
+          <button class="action-btn" title="Email" onclick="event.stopPropagation();mailTo(${realIdx})">✉</button>
+          <button class="action-btn" title="Detalle">👁</button>
+          ${r[COL.TEL]?`<button class="action-btn" title="Llamar" onclick="event.stopPropagation();window.location='tel:${r[COL.TEL]}'">📞</button>`:''}
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('paginationInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+  document.getElementById('rowCount').textContent = `${total.toLocaleString('es')} expositores`;
+
+  // Page buttons
+  const pb = document.getElementById('pageButtons');
+  pb.innerHTML = '';
+  const btn = (n, label, cls='') => `<button class="page-btn ${cls}" onclick="goPage(${n})">${label}</button>`;
+  pb.innerHTML += btn(Math.max(1,currentPage-1),'‹');
+  const range = [];
+  for (let p=Math.max(1,currentPage-1); p<=Math.min(totalPages,currentPage+2); p++) range.push(p);
+  range.forEach(p => pb.innerHTML += btn(p, p, p===currentPage?'active':''));
+  if (range[range.length-1] < totalPages) pb.innerHTML += `<button class="page-btn" disabled>…</button>` + btn(totalPages, totalPages);
+  pb.innerHTML += btn(Math.min(totalPages,currentPage+1),'›');
+}
+
+function goPage(p) { currentPage = p; renderTable(); }
+
+// ─── CRM SAVE ───
+async function quickSaveCRM(event, realIdx) {
+  const sel = event.target;
+  const value = sel.value;
+  sel.classList.add('saving');
+  try {
+    await saveCRMState(realIdx, value);
+    showToast('✓ Estado guardado en Sheet', 'success');
+  } catch(e) {
+    showToast('Error guardando: ' + e.message, 'error');
+  } finally {
+    setTimeout(() => sel.classList.remove('saving'), 1500);
+  }
+}
+
+async function saveModalCRM() {
+  if (modalRowIdx < 0) return;
+  const value = document.getElementById('modalCRMSelect').value;
+  try {
+    await saveCRMState(modalRowIdx, value);
+    showToast('✓ Guardado en Google Sheet', 'success');
+    renderTable();
+    closeModal();
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ─── MODAL ───
+function openModal(idx) {
+  modalRowIdx = idx;
+  const r = allData[idx];
+  document.getElementById('modalCompany').textContent = r[COL.EMPRESA] || '—';
+  document.getElementById('modalId').textContent = r[COL.ID] || '—';
+  document.getElementById('mFeria').textContent = r[COL.EVENTO] || '—';
+  document.getElementById('mRecinto').textContent = r[COL.RECINTO] || '—';
+  const w = r[COL.WEB]; document.getElementById('mWeb').textContent = w||'—'; document.getElementById('mWeb').href = w?'https://'+w:'#';
+  document.getElementById('mPais').textContent = r[COL.PAIS] || '—';
+  document.getElementById('mNombre').textContent = r[COL.CONTACTO] || '—';
+  document.getElementById('mCargo').textContent = r[COL.CARGO] || '—';
+  const em = r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]||''; document.getElementById('mEmail').textContent = em||'—'; document.getElementById('mEmail').href = 'mailto:'+em;
+  document.getElementById('mTel').textContent = r[COL.TEL] || '—';
+  document.getElementById('modalCRMSelect').value = r[COL.CRM_ESTADO] || '';
+  document.getElementById('modalEmailBtn').onclick = () => mailTo(idx);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function mailTo(idx) { const r=allData[idx]; const em=r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN]; if(em) window.location='mailto:'+em; }
+
+// ─── EXPORT ───
+function exportCSV() {
+  const headers = ['ID','Evento','Empresa','Contacto','Email','País','Estado Envío','Brevo','Estado CRM'];
+  const rows = filteredData.map(r => [
+    r[COL.ID],r[COL.EVENTO],r[COL.EMPRESA],r[COL.CONTACTO],
+    r[COL.EMAIL_DIR]||r[COL.EMAIL_GEN],r[COL.PAIS],
+    r[COL.ESTADO_ENVIO],r[COL.BREVO],r[COL.CRM_ESTADO]||''
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = 'resa_crm_export.csv';
+  a.click();
+}
+
+// ─── LOGOUT ───
+function logout() {
+  accessToken = null; allData = []; filteredData = [];
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+}
+
+// ─── HELPERS ───
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function badgeBrevo(b) {
+  if (!b) return '<span class="badge badge-sent" style="opacity:.4">—</span>';
+  if (b==='opened') return '<span class="badge badge-opened">Abierto</span>';
+  if (b==='click')  return '<span class="badge badge-click">Click</span>';
+  if (b==='sent')   return '<span class="badge badge-sent">Enviado</span>';
+  if (b==='ENVIADO') return '<span class="badge badge-enviado">Brevo OK</span>';
+  return `<span class="badge badge-sent">${esc(b)}</span>`;
+}
+function badgeEnvio(e) {
+  if (e==='Error')       return '<span class="badge badge-error">Error</span>';
+  if (e==='ENVIADO')     return '<span class="badge badge-enviado">Enviado</span>';
+  if (e==='FORZAR ENVIO') return '<span class="badge badge-sent">Forzado</span>';
+  return `<span class="badge badge-sent">${esc(e||'—')}</span>`;
+}
+
+function crmOptions(current) {
+  const opts = ['🔵 Nuevo','📧 Contactado','👁 Ha abierto','📞 Llamar','💬 Negociando','✅ Cerrado','❌ Descartado'];
+  return opts.map(o => `<option value="${o}"${current===o?' selected':''}>${o}</option>`).join('');
+}
+
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+</script>
+</body>
+</html>
