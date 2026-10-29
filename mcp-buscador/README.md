@@ -1,6 +1,8 @@
 # Buscador MCP · DelegaloAI
 
-Conector personalizado (servidor MCP remoto) que da a Claude búsquedas web de verdad, al estilo de Claude Code, desde la app de Claude, el chat web o CarPlay. Por dentro llama a la API de Claude con las herramientas `web_search` y `web_fetch`.
+Conector personalizado (servidor MCP remoto) para Claude. Cuando Claude lo usa, el VPS lanza **Claude Code** con búsqueda web y lectura de páginas y devuelve el resultado. Así tienes las búsquedas de Claude Code desde el chat, la app del móvil y CarPlay.
+
+Claude Code se ejecuta solo con `WebSearch` y `WebFetch`: no puede tocar archivos ni ejecutar comandos en el VPS.
 
 ## Herramientas
 
@@ -12,45 +14,70 @@ Conector personalizado (servidor MCP remoto) que da a Claude búsquedas web de v
 | `ficha_empresa` | Datos de contacto y contexto de una empresa concreta |
 | `leer_pagina` | Leer y resumir una URL |
 
-## Desplegar en Render (recomendado)
+## Instalar en el VPS
 
-1. En [render.com](https://render.com) → **New → Blueprint** → elige el repo `elek-collab/index.html`. Usa el `render.yaml` de la raíz.
-2. Pega tu `ANTHROPIC_API_KEY` cuando lo pida. `CLAVE_MCP` se genera sola.
-3. Cuando termine, copia la URL del servicio (p. ej. `https://buscador-mcp.onrender.com`) y el valor de `CLAVE_MCP` (Environment del servicio).
+Necesitas Node 20 o superior y Claude Code con la sesión iniciada:
 
-El plan gratuito de Render se duerme tras 15 min sin uso y la primera búsqueda tarda ~1 min en despertar; para el coche conviene el plan de pago más barato.
+```
+npm install -g @anthropic-ai/claude-code
+claude          # la primera vez: inicia sesión con tu cuenta y sal con /exit
+```
 
-También funciona en cualquier sitio que ejecute Docker (Railway, Fly.io, Cloud Run…) con el `Dockerfile` de esta carpeta y las mismas dos variables.
+Después:
+
+```
+cd /opt
+git clone -b claude/mcp-personalizado-claude-code-6c45ay https://github.com/elek-collab/index.html
+cd index.html/mcp-buscador
+npm install
+npm run build
+cp .env.example .env
+echo "CLAVE_MCP=$(openssl rand -hex 24)" >> .env
+```
+
+Arrancarlo como servicio (se reinicia solo y arranca con el VPS):
+
+```
+cp buscador-mcp.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now buscador-mcp
+systemctl status buscador-mcp
+```
+
+Si clonas en otra carpeta o usas otro usuario, cambia `WorkingDirectory`, `EnvironmentFile` y `User` en `buscador-mcp.service`. El usuario tiene que ser el mismo con el que iniciaste sesión en Claude Code.
+
+## HTTPS
+
+Claude solo acepta conectores con `https://`. Publica el puerto 3100 con el mismo proxy que uses para el conector de WhatsApp. Por ejemplo, con Caddy y un subdominio que apunte al VPS:
+
+```
+buscador.tudominio.com {
+    reverse_proxy localhost:3100
+}
+```
+
+Con Nginx, una ruta `location /mcp/ { proxy_pass http://localhost:3100; proxy_buffering off; proxy_read_timeout 300s; }` dentro del dominio que ya tengas.
 
 ## Conectarlo a Claude
 
 1. claude.ai → **Ajustes → Conectores → Añadir conector personalizado**.
-2. Nombre: `Buscador`. URL:
+2. Nombre: `Buscador`. URL (la clave es la de `.env`):
    ```
-   https://TU-SERVICIO.onrender.com/mcp/TU_CLAVE_MCP
+   https://buscador.tudominio.com/mcp/TU_CLAVE_MCP
    ```
-3. Guardar y activarlo en el chat. Al estar en tu cuenta, aparece también en la app del móvil y en CarPlay.
+3. Guardar y activarlo. Aparece también en la app del móvil y en CarPlay.
 
-Para Claude Code:
-```
-claude mcp add --transport http buscador https://TU-SERVICIO.onrender.com/mcp/TU_CLAVE_MCP
-```
+La clave en la URL es la contraseña del conector: no la compartas. Si se filtra, cámbiala en `.env`, ejecuta `systemctl restart buscador-mcp` y actualiza la URL del conector.
 
-La clave en la URL es la contraseña del conector: no la compartas. Si se filtra, cambia `CLAVE_MCP` en Render y actualiza la URL del conector.
-
-## En local
+## Comprobar que va
 
 ```
-cp .env.example .env   # rellena las dos variables
-npm install
-npm run build
-set -a; . ./.env; set +a; npm start
+curl https://buscador.tudominio.com/              # "Buscador MCP de DelegaloAI funcionando"
+journalctl -u buscador-mcp -f                       # ver lo que pasa en directo
 ```
 
-Servidor en `http://localhost:3000/mcp/<CLAVE_MCP>`.
+## Opcional: usar la API en vez de Claude Code
 
-## Notas
+Pon `MOTOR=api` y `ANTHROPIC_API_KEY=...` en `.env` y reinicia. Así no depende de la sesión de Claude Code y lo que gastes se cobra en la cuenta de la API.
 
-- Modelo: `claude-opus-5-5` por defecto (variable `MODELO_CLAUDE` para cambiarlo).
-- Si Claude rechaza una petición por sus filtros de seguridad, la API la reintenta sola con otro modelo (`fallbacks: "default"`).
-- Cada búsqueda cuesta lo que consuma en la API de Anthropic más 10 $ por cada 1000 búsquedas web.
+Ojo: si `ANTHROPIC_API_KEY` está definida en el VPS, Claude Code también la usará y lo cobrará en la API en lugar de en tu suscripción.

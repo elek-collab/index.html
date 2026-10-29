@@ -4,7 +4,7 @@ import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js
 import { timingSafeEqual } from "node:crypto";
 import type { Request, Response } from "express";
 import { z } from "zod";
-import { buscar } from "./buscar.js";
+import { buscar, MOTOR } from "./buscar.js";
 
 const PORT = Number(process.env.PORT) || 3000;
 const CLAVE = process.env.CLAVE_MCP;
@@ -12,8 +12,8 @@ if (!CLAVE || CLAVE.length < 24) {
   console.error("Falta CLAVE_MCP (mínimo 24 caracteres). Genera una con: openssl rand -hex 24");
   process.exit(1);
 }
-if (!process.env.ANTHROPIC_API_KEY) {
-  console.error("Falta ANTHROPIC_API_KEY");
+if (MOTOR === "api" && !process.env.ANTHROPIC_API_KEY) {
+  console.error("Con MOTOR=api hace falta ANTHROPIC_API_KEY");
   process.exit(1);
 }
 
@@ -186,5 +186,5 @@ app.all("/mcp/:clave", (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Buscador MCP escuchando en el puerto ${PORT}`);
+  console.log(`Buscador MCP escuchando en el puerto ${PORT} (motor: ${MOTOR})`);
 });

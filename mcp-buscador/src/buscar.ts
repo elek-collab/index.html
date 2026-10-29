@@ -1,6 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { spawn } from "node:child_process";
 
-const client = new Anthropic();
+// "claude-code" usa el Claude Code instalado en el servidor (tu suscripción);
+// "api" llama directamente a la API de Anthropic con ANTHROPIC_API_KEY.
+export const MOTOR = process.env.MOTOR === "api" ? "api" : "claude-code";
+
+const client = MOTOR === "api" ? new Anthropic() : undefined;
 
 const MODEL = process.env.MODELO_CLAUDE || "claude-opus-5-5";
 const MAX_CONTINUACIONES = 5;
@@ -25,6 +30,57 @@ const SISTEMA = `Eres el buscador de DelegaloAI. Investigas en internet y devuel
  * (web_search y web_fetch) y devuelve el texto final con las fuentes.
  */
 export async function buscar(peticion: string, opciones: OpcionesBusqueda = {}): Promise<string> {
+  return MOTOR === "api" ? buscarConApi(peticion, opciones) : buscarConClaudeCode(peticion, opciones);
+}
+
+/**
+ * Ejecuta Claude Code en modo no interactivo con solo WebSearch y WebFetch:
+ * no puede tocar archivos ni ejecutar comandos del servidor.
+ */
+function buscarConClaudeCode(peticion: string, opciones: OpcionesBusqueda): Promise<string> {
+  const { esfuerzo = "low" } = opciones;
+  const herramientas = "WebSearch,WebFetch";
+  const args = [
+    "-p",
+    "--output-format", "json",
+    "--tools", herramientas,
+    "--allowedTools", herramientas,
+    "--append-system-prompt", SISTEMA,
+    "--effort", esfuerzo,
+    "--no-session-persistence",
+    "--strict-mcp-config",
+    "--setting-sources", "",
+  ];
+  if (process.env.MODELO_CLAUDE) args.push("--model", process.env.MODELO_CLAUDE);
+
+  return new Promise((resolve, reject) => {
+    const hijo = spawn(process.env.CLAUDE_BIN || "claude", args, {
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    let salida = "";
+    let errores = "";
+    const limite = setTimeout(() => hijo.kill("SIGTERM"), 5 * 60_000);
+    hijo.stdout.on("data", (d) => (salida += d));
+    hijo.stderr.on("data", (d) => (errores += d));
+    hijo.on("error", (err) => {
+      clearTimeout(limite);
+      reject(new Error(`No se pudo ejecutar Claude Code: ${err.message}`));
+    });
+    hijo.on("close", (codigo) => {
+      clearTimeout(limite);
+      try {
+        const json = JSON.parse(salida);
+        if (json.is_error) return reject(new Error(json.result || "Claude Code devolvió un error"));
+        resolve(String(json.result ?? "").trim());
+      } catch {
+        reject(new Error(`Claude Code terminó con código ${codigo}: ${(errores || salida).slice(0, 500)}`));
+      }
+    });
+    hijo.stdin.end(peticion);
+  });
+}
+
+async function buscarConApi(peticion: string, opciones: OpcionesBusqueda): Promise<string> {
   const { esfuerzo = "low", maxBusquedas = 6, leerPaginas = true } = opciones;
 
   const tools: Anthropic.Beta.Messages.BetaToolUnion[] = [
@@ -43,7 +99,7 @@ export async function buscar(peticion: string, opciones: OpcionesBusqueda = {}):
   let respuesta: Anthropic.Beta.Messages.BetaMessage | undefined;
 
   for (let i = 0; i <= MAX_CONTINUACIONES; i++) {
-    respuesta = await client.beta.messages
+    respuesta = await client!.beta.messages
       .stream({
         model: MODEL,
         max_tokens: 32000,

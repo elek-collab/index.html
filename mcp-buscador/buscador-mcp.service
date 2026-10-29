@@ -1,0 +1,14 @@
+[Unit]
+Description=Buscador MCP de DelegaloAI
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/index.html/mcp-buscador
+EnvironmentFile=/opt/index.html/mcp-buscador/.env
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+# El mismo usuario con el que hiciste "claude" y el login
+User=root
+
+[Install]
+WantedBy=multi-user.target
