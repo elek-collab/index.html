@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: buscador-mcp
+    runtime: node
+    rootDir: mcp-buscador
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CLAVE_MCP
+        generateValue: true
